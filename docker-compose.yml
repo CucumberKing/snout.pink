@@ -29,9 +29,7 @@ services:
   # Frontend - Angular with nginx
   # ─────────────────────────────────────────────────────────────────────────────
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
+    image: gurkenkoenig/snout-pink-frontend:latest
     container_name: snout-frontend
     restart: unless-stopped
     expose:
@@ -43,9 +41,7 @@ services:
   # Backend - FastAPI with uv
   # ─────────────────────────────────────────────────────────────────────────────
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    image: gurkenkoenig/snout-pink-backend:latest
     container_name: snout-backend
     restart: unless-stopped
     environment:

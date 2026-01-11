@@ -13,8 +13,8 @@ echo "   Tag: ${TAG}"
 echo "   Platforms: ${PLATFORM}"
 echo ""
 
-# Login check
-if ! docker info | grep -q "Username"; then
+# Login check (check docker config for auth)
+if ! grep -q "index.docker.io" ~/.docker/config.json 2>/dev/null; then
     echo "Not logged in to Docker Hub. Run: docker login"
     exit 1
 fi
@@ -23,12 +23,16 @@ fi
 echo "Building and pushing backend..."
 docker buildx build --platform "${PLATFORM}" \
     -t "${DOCKER_USER}/${REPO_NAME}-backend:${TAG}" \
+    --provenance=true \
+    --sbom=true \
     --push ./backend
 
 # Build and push frontend (multi-platform)
 echo "Building and pushing frontend..."
 docker buildx build --platform "${PLATFORM}" \
     -t "${DOCKER_USER}/${REPO_NAME}-frontend:${TAG}" \
+    --provenance=true \
+    --sbom=true \
     --push ./frontend
 
 echo ""
