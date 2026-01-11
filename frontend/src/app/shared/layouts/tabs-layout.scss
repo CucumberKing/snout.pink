@@ -1,0 +1,25 @@
+ion-tab-bar {
+  --background: var(--ion-card-background);
+  --border: none;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+ion-tab-button {
+  --color: var(--ion-color-medium);
+  --color-selected: var(--ion-color-primary);
+
+  ion-icon {
+    font-size: 24px;
+  }
+
+  ion-label {
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  &.locked {
+    opacity: 0.5;
+  }
+}
+

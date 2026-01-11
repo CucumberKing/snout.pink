@@ -1,0 +1,28 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <div class="header-content">
+      <h1 class="page-title">Cost Grid</h1>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="content-wrapper">
+    <div class="grid-section">
+      <app-treemap />
+
+      <div class="totals-card">
+        <div class="total-item">
+          <span class="text-footnote text-secondary">Total / Month</span>
+          <span class="text-title-1">{{ formatted_monthly() }}</span>
+        </div>
+        <div class="total-divider"></div>
+        <div class="total-item">
+          <span class="text-footnote text-secondary">Per Year</span>
+          <span class="text-title-3 text-primary">{{ formatted_yearly() }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>
+

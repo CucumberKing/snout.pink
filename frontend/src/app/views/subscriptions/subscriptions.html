@@ -1,0 +1,60 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <div class="header-content">
+      <h1 class="app-title">snout.pink</h1>
+      <ion-button fill="clear" size="small" (click)="open_settings()">
+        <ion-icon slot="icon-only" name="settings-outline" />
+      </ion-button>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="content-wrapper">
+    @if (!subscription_service.has_subscriptions()) {
+      <!-- Empty State -->
+      <div class="empty-state" (click)="open_add_subscription()">
+        <div class="empty-state-icon animate-pulse-glow">
+          <ion-icon name="add-outline" />
+        </div>
+        <h2 class="text-title-2">Add your first subscription</h2>
+        <p class="text-body text-secondary">
+          Netflix, Spotify, Gym membership...
+        </p>
+        <ion-button class="empty-state-btn" expand="block">
+          Get Started
+          <ion-icon slot="end" name="arrow-forward-outline" />
+        </ion-button>
+      </div>
+    } @else {
+      <!-- Subscription List -->
+      <div class="subscriptions-section">
+        <div class="section-header">
+          <span class="section-title">Your Subscriptions</span>
+          <span class="section-count">{{ subscription_service.subscription_count() }}</span>
+        </div>
+
+        <div class="subscription-list">
+          @for (sub of subscription_service.get_sorted_by_cost(); track sub.subscription_id; let i = $index) {
+            <app-subscription-card
+              [subscription]="sub"
+              [animation_delay]="i"
+              (edit)="open_edit_subscription($event)"
+              (delete)="subscription_service.remove($event.subscription_id)"
+            />
+          }
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- FAB for Add -->
+  @if (subscription_service.has_subscriptions()) {
+    <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+      <ion-fab-button (click)="open_add_subscription()">
+        <ion-icon name="add-outline" />
+      </ion-fab-button>
+    </ion-fab>
+  }
+</ion-content>
+

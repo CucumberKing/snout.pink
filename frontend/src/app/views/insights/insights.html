@@ -1,0 +1,57 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <div class="header-content">
+      <h1 class="page-title">Insights</h1>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="content-wrapper">
+    <!-- Hero Section -->
+    <div class="insights-hero">
+      <div class="insights-glow"></div>
+      <div class="insights-content">
+        <ion-icon name="sparkles-outline" class="insights-icon" />
+        <p class="text-subhead">
+          You're spending
+          <span class="text-headline">{{ formatted_yearly() }}</span>/year
+          on <span class="text-headline">{{ subscription_service.subscription_count() }}</span> subscriptions
+        </p>
+      </div>
+    </div>
+
+    <!-- Summary Card -->
+    <div class="summary-card">
+      <div class="summary-header">
+        <span class="text-headline">Top Subscriptions</span>
+      </div>
+
+      @for (sub of top_subscriptions(); track sub.subscription_id; let i = $index) {
+        <div class="summary-row" [class.highlight]="i === 0">
+          <div class="summary-rank">{{ i + 1 }}</div>
+          <div class="summary-info">
+            <span class="text-body">{{ sub.name }}</span>
+            <span class="text-footnote text-secondary">
+              {{ format_sub_monthly(sub) }}/mo
+            </span>
+          </div>
+          <div class="summary-percent">{{ get_percent(sub) }}%</div>
+        </div>
+      }
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span class="stat-value">{{ formatted_monthly() }}</span>
+        <span class="text-caption text-secondary">Monthly</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value text-primary">{{ subscription_service.subscription_count() }}</span>
+        <span class="text-caption text-secondary">Subscriptions</span>
+      </div>
+    </div>
+  </div>
+</ion-content>
+

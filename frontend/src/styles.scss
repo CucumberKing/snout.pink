@@ -1,0 +1,691 @@
+/* ============================================
+   Ionic Core CSS
+   ============================================ */
+@import '@ionic/angular/css/core.css';
+@import '@ionic/angular/css/normalize.css';
+@import '@ionic/angular/css/structure.css';
+@import '@ionic/angular/css/typography.css';
+
+/* Optional Ionic utilities */
+@import '@ionic/angular/css/padding.css';
+@import '@ionic/angular/css/float-elements.css';
+@import '@ionic/angular/css/text-alignment.css';
+@import '@ionic/angular/css/text-transformation.css';
+@import '@ionic/angular/css/flex-utils.css';
+@import '@ionic/angular/css/display.css';
+
+/* Ionicons - loaded via addIcons in components */
+
+/* ============================================
+   snout.pink Design System - Playful & Warm
+   ============================================ */
+
+/* Nunito Font - Friendly rounded sans-serif (self-hosted) */
+@font-face {
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url('/fonts/nunito-variable.woff2') format('woff2');
+}
+
+:root {
+  /* ========================================
+     Color Palette - snout.pink Brand
+     Derived from the cute piggy bank mascot
+     ======================================== */
+  
+  /* Primary Brand Color - Soft Blush Pink */
+  --ion-color-primary: #E8A89C;
+  --ion-color-primary-rgb: 232, 168, 156;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #cc938a;
+  --ion-color-primary-tint: #eab1a6;
+  
+  /* Secondary - Base Blush Pink (lighter) */
+  --ion-color-secondary: #F0CFC8;
+  --ion-color-secondary-rgb: 240, 207, 200;
+  --ion-color-secondary-contrast: #5D4245;
+  --ion-color-secondary-contrast-rgb: 93, 66, 69;
+  --ion-color-secondary-shade: #d3b6b0;
+  --ion-color-secondary-tint: #f2d5ce;
+  
+  /* Tertiary - Gold Accent (coins) */
+  --ion-color-tertiary: #D4A574;
+  --ion-color-tertiary-rgb: 212, 165, 116;
+  --ion-color-tertiary-contrast: #ffffff;
+  --ion-color-tertiary-contrast-rgb: 255, 255, 255;
+  --ion-color-tertiary-shade: #bb9166;
+  --ion-color-tertiary-tint: #d8ae82;
+  
+  /* Success - Soft Green (from flower stems) */
+  --ion-color-success: #9CB89B;
+  --ion-color-success-rgb: 156, 184, 155;
+  --ion-color-success-contrast: #ffffff;
+  --ion-color-success-contrast-rgb: 255, 255, 255;
+  --ion-color-success-shade: #89a288;
+  --ion-color-success-tint: #a6c0a5;
+  
+  /* Warning - Warm Gold */
+  --ion-color-warning: #E5B567;
+  --ion-color-warning-rgb: 229, 181, 103;
+  --ion-color-warning-contrast: #5D4245;
+  --ion-color-warning-contrast-rgb: 93, 66, 69;
+  --ion-color-warning-shade: #ca9f5b;
+  --ion-color-warning-tint: #e8bc76;
+  
+  /* Danger - Soft Rose */
+  --ion-color-danger: #D98880;
+  --ion-color-danger-rgb: 217, 136, 128;
+  --ion-color-danger-contrast: #ffffff;
+  --ion-color-danger-contrast-rgb: 255, 255, 255;
+  --ion-color-danger-shade: #bf7871;
+  --ion-color-danger-tint: #dd948d;
+  
+  /* Medium - Dusty Rose (secondary text) */
+  --ion-color-medium: #9D8385;
+  --ion-color-medium-rgb: 157, 131, 133;
+  --ion-color-medium-contrast: #ffffff;
+  --ion-color-medium-contrast-rgb: 255, 255, 255;
+  --ion-color-medium-shade: #8a7375;
+  --ion-color-medium-tint: #a78f91;
+  
+  /* Light - Cream/Blush */
+  --ion-color-light: #F5EBE8;
+  --ion-color-light-rgb: 245, 235, 232;
+  --ion-color-light-contrast: #5D4245;
+  --ion-color-light-contrast-rgb: 93, 66, 69;
+  --ion-color-light-shade: #d8cfcc;
+  --ion-color-light-tint: #f6edea;
+  
+  /* ========================================
+     Background & Text Colors - Warm & Cozy
+     ======================================== */
+  --ion-background-color: #FAF7F5;
+  --ion-background-color-rgb: 250, 247, 245;
+  
+  --ion-text-color: #5D4245;
+  --ion-text-color-rgb: 93, 66, 69;
+  
+  --ion-item-background: #FFFFFF;
+  --ion-card-background: #FFFFFF;
+  --ion-toolbar-background: #FFFFFF;
+  
+  /* ========================================
+     Typography - Nunito (friendly & rounded)
+     ======================================== */
+  --ion-font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  
+  /* Playful type scale */
+  --font-size-large-title: 34px;
+  --font-size-title-1: 28px;
+  --font-size-title-2: 22px;
+  --font-size-title-3: 20px;
+  --font-size-headline: 17px;
+  --font-size-body: 17px;
+  --font-size-callout: 16px;
+  --font-size-subhead: 15px;
+  --font-size-footnote: 13px;
+  --font-size-caption-1: 12px;
+  --font-size-caption-2: 11px;
+  
+  /* ========================================
+     Shadows - Soft & Warm (pink-tinted)
+     ======================================== */
+  --shadow-xs: 0 1px 2px rgba(93, 66, 69, 0.04);
+  --shadow-sm: 0 2px 8px rgba(93, 66, 69, 0.06), 0 1px 2px rgba(93, 66, 69, 0.04);
+  --shadow-md: 0 4px 12px rgba(93, 66, 69, 0.08), 0 2px 4px rgba(93, 66, 69, 0.04);
+  --shadow-lg: 0 8px 24px rgba(93, 66, 69, 0.10), 0 4px 8px rgba(93, 66, 69, 0.06);
+  --shadow-xl: 0 16px 48px rgba(93, 66, 69, 0.12), 0 8px 16px rgba(93, 66, 69, 0.08);
+  --shadow-modal: 0 25px 50px -12px rgba(93, 66, 69, 0.20);
+  
+  /* ========================================
+     Spacing - Generous & Friendly
+     ======================================== */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 48px;
+  
+  /* ========================================
+     Border Radius - Extra Rounded for playfulness
+     ======================================== */
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+  --radius-2xl: 32px;
+  --radius-full: 9999px;
+  
+  /* ========================================
+     Transitions - Bouncy & Playful
+     ======================================== */
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  
+  --duration-fast: 150ms;
+  --duration-base: 250ms;
+  --duration-slow: 350ms;
+  --duration-slower: 500ms;
+  
+  /* ========================================
+     Subscription Color Palette - Soft pastels
+     ======================================== */
+  --sub-purple: #E9D5FF;
+  --sub-purple-accent: #C4B5FD;
+  --sub-blue: #BFDBFE;
+  --sub-blue-accent: #93C5FD;
+  --sub-cyan: #A5F3FC;
+  --sub-cyan-accent: #67E8F9;
+  --sub-green: #BBF7D0;
+  --sub-green-accent: #86EFAC;
+  --sub-yellow: #FEF08A;
+  --sub-yellow-accent: #FDE047;
+  --sub-orange: #FED7AA;
+  --sub-orange-accent: #FDBA74;
+  --sub-pink: #F0CFC8;
+  --sub-pink-accent: #E8A89C;
+  --sub-rose: #FECDD3;
+  --sub-rose-accent: #FDA4AF;
+  --sub-slate: #E2E8F0;
+  --sub-slate-accent: #CBD5E1;
+  --sub-indigo: #C7D2FE;
+  --sub-indigo-accent: #A5B4FC;
+  --sub-teal: #99F6E4;
+  --sub-teal-accent: #5EEAD4;
+  --sub-amber: #FDE68A;
+  --sub-amber-accent: #FCD34D;
+}
+
+/* ============================================
+   Base Styles
+   ============================================ */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--ion-font-family);
+  background-color: var(--ion-background-color);
+  color: var(--ion-text-color);
+}
+
+/* ============================================
+   Ionic Component Overrides - Playful Feel
+   ============================================ */
+
+/* Content padding */
+ion-content {
+  --padding-start: 20px;
+  --padding-end: 20px;
+  --padding-top: 16px;
+  --padding-bottom: 100px; /* Space for bottom bar */
+}
+
+/* Cards with soft shadows */
+ion-card {
+  --background: var(--ion-card-background);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  margin: 0;
+  
+  &:active {
+    transform: scale(0.98);
+    transition: transform var(--duration-fast) var(--ease-spring);
+  }
+}
+
+/* Items with clean styling */
+ion-item {
+  --background: var(--ion-item-background);
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --inner-padding-end: 0;
+  --min-height: 56px;
+  
+  &::part(native) {
+    border-radius: var(--radius-md);
+  }
+}
+
+/* Inputs with warm styling */
+ion-input, ion-textarea {
+  --background: var(--ion-color-light);
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+  --border-radius: var(--radius-md);
+  --placeholder-color: var(--ion-color-medium);
+  --placeholder-opacity: 1;
+  font-size: var(--font-size-body);
+  
+  &.has-focus {
+    --background: #ffffff;
+    box-shadow: 0 0 0 2px var(--ion-color-primary);
+  }
+}
+
+/* Buttons with bounce animation */
+ion-button {
+  --border-radius: var(--radius-md);
+  --padding-start: 24px;
+  --padding-end: 24px;
+  font-weight: 600;
+  letter-spacing: 0;
+  transition: transform var(--duration-fast) var(--ease-spring);
+  
+  &:active {
+    transform: scale(0.96);
+  }
+}
+
+ion-button.button-large {
+  --border-radius: var(--radius-lg);
+  --padding-top: 16px;
+  --padding-bottom: 16px;
+  font-size: var(--font-size-headline);
+}
+
+/* Segment control - Soft & Rounded */
+ion-segment {
+  --background: var(--ion-color-light);
+  border-radius: var(--radius-md);
+  padding: 4px;
+  min-height: 44px;
+}
+
+ion-segment-button {
+  --background-checked: #ffffff;
+  --color: var(--ion-color-medium);
+  --color-checked: var(--ion-text-color);
+  --indicator-color: transparent;
+  --border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: var(--font-size-subhead);
+  min-height: 36px;
+  text-transform: none;
+  letter-spacing: 0;
+  
+  &::part(indicator-background) {
+    background: #ffffff;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-sm);
+  }
+}
+
+/* Modal with sheet styling */
+ion-modal {
+  --border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
+  --backdrop-opacity: 0.4;
+
+  &::part(backdrop) {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    background: rgba(93, 66, 69, 0.2);
+  }
+
+  &::part(handle) {
+    background: var(--ion-color-medium);
+    opacity: 0.4;
+    width: 36px;
+    height: 5px;
+    margin-top: 8px;
+  }
+}
+
+/* Action sheet styling */
+ion-action-sheet {
+  --background: #ffffff;
+  --button-background: transparent;
+  --button-background-activated: var(--ion-color-light);
+  
+  .action-sheet-group {
+  border-radius: var(--radius-lg);
+    margin: 8px;
+  }
+}
+
+/* FAB with vibrant pink */
+ion-fab-button {
+  --background: #E88A9C;
+  --color: #ffffff;
+  --box-shadow: 0 8px 24px rgba(232, 138, 156, 0.4), 0 4px 8px rgba(232, 138, 156, 0.2);
+  transition: transform var(--duration-fast) var(--ease-spring), 
+              box-shadow var(--duration-base) ease;
+  
+  &:active {
+    transform: scale(0.92);
+    --box-shadow: 0 4px 12px rgba(232, 138, 156, 0.3);
+  }
+}
+
+/* Toolbar - Clean header */
+ion-toolbar {
+  --background: transparent;
+  --border-width: 0;
+  --padding-start: 20px;
+  --padding-end: 20px;
+}
+
+ion-header ion-toolbar:first-of-type {
+  padding-top: var(--ion-safe-area-top, 0);
+}
+
+/* Footer bar */
+ion-footer ion-toolbar {
+  --background: var(--ion-background-color);
+  padding-bottom: var(--ion-safe-area-bottom, 0);
+}
+
+/* List styling */
+ion-list {
+  --ion-item-background: transparent;
+  background: transparent;
+  padding: 0;
+}
+
+ion-list-header {
+  font-size: var(--font-size-footnote);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ion-color-medium);
+  padding-left: 0;
+  padding-bottom: 8px;
+}
+
+/* Item sliding - Swipe actions */
+ion-item-sliding {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+ion-item-options {
+  border: none;
+  
+  ion-item-option {
+    font-weight: 600;
+    font-size: var(--font-size-footnote);
+  }
+}
+
+/* ============================================
+   Typography Utilities
+   ============================================ */
+.text-large-title {
+  font-size: var(--font-size-large-title);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+}
+
+.text-title-1 {
+  font-size: var(--font-size-title-1);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+}
+
+.text-title-2 {
+  font-size: var(--font-size-title-2);
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1.2;
+}
+
+.text-title-3 {
+  font-size: var(--font-size-title-3);
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.text-headline {
+  font-size: var(--font-size-headline);
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.text-body {
+  font-size: var(--font-size-body);
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.text-callout {
+  font-size: var(--font-size-callout);
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+.text-subhead {
+  font-size: var(--font-size-subhead);
+  font-weight: 400;
+  line-height: 1.35;
+}
+
+.text-footnote {
+  font-size: var(--font-size-footnote);
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+.text-caption {
+  font-size: var(--font-size-caption-1);
+  font-weight: 400;
+  line-height: 1.3;
+}
+
+.text-secondary {
+  color: var(--ion-color-medium);
+}
+
+.text-primary {
+  color: var(--ion-color-primary);
+}
+
+.text-gold {
+  color: var(--ion-color-tertiary);
+}
+
+/* ============================================
+   Animation Utilities
+   ============================================ */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(232, 168, 156, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 0 12px rgba(232, 168, 156, 0);
+  }
+}
+
+@keyframes bounce-soft {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in var(--duration-base) var(--ease-out) forwards;
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up var(--duration-slow) var(--ease-out) forwards;
+}
+
+.animate-scale-in {
+  animation: scale-in var(--duration-base) var(--ease-spring) forwards;
+}
+
+.animate-slide-up {
+  animation: slide-up var(--duration-slow) var(--ease-spring) forwards;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.animate-bounce {
+  animation: bounce-soft 1s ease-in-out infinite;
+}
+
+/* Staggered animation delays */
+.delay-1 { animation-delay: 50ms; }
+.delay-2 { animation-delay: 100ms; }
+.delay-3 { animation-delay: 150ms; }
+.delay-4 { animation-delay: 200ms; }
+.delay-5 { animation-delay: 250ms; }
+.delay-6 { animation-delay: 300ms; }
+
+/* ============================================
+   Utility Classes
+   ============================================ */
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Premium card styling */
+.premium-card {
+  background: var(--ion-card-background);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: var(--spacing-md);
+  transition: transform var(--duration-fast) var(--ease-spring),
+              box-shadow var(--duration-base) ease;
+  
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+/* Glass effect with warm tint */
+.glass {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* Gradient backgrounds - warm & playful */
+.bg-gradient-warm {
+  background: linear-gradient(180deg, #FDF5F3 0%, var(--ion-background-color) 100%);
+}
+
+.bg-gradient-blush {
+  background: linear-gradient(135deg, #F0CFC8 0%, #E8A89C 100%);
+}
+
+.bg-gradient-gold {
+  background: linear-gradient(135deg, #D4A574 0%, #E5B567 100%);
+}
+
+/* ============================================
+   Treemap Styles (kept for visualization)
+   ============================================ */
+.treemap-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  background-color: var(--ion-color-light);
+  
+  @media (min-width: 640px) {
+    aspect-ratio: 4 / 3;
+  }
+}
+
+.treemap-cell {
+  position: absolute;
+  overflow: hidden;
+  cursor: pointer;
+  transition: z-index 0s;
+  
+  &:hover {
+    z-index: 50;
+  }
+}
+
+.treemap-cell-inner {
+  position: absolute;
+  inset: 3px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  transition: transform var(--duration-fast) var(--ease-out), 
+              box-shadow var(--duration-base) ease;
+  
+  .treemap-cell:hover & {
+    transform: scale(1.02);
+    box-shadow: var(--shadow-lg);
+  }
+}

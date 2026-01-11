@@ -1,0 +1,68 @@
+# Caddyfile for Snout Pink
+# Automatic HTTPS with Let's Encrypt
+# Reverse proxy to backend API and frontend nginx
+
+# Replace with your actual domain
+{$DOMAIN:localhost} {
+    # Enable compression
+    encode gzip zstd
+
+    # Security headers
+    header {
+        # Prevent clickjacking
+        X-Frame-Options "SAMEORIGIN"
+        # Prevent MIME type sniffing
+        X-Content-Type-Options "nosniff"
+        # XSS protection (legacy browsers)
+        X-XSS-Protection "1; mode=block"
+        # Referrer policy
+        Referrer-Policy "strict-origin-when-cross-origin"
+        # Content Security Policy - adjust as needed
+        Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; frame-ancestors 'self'"
+        # Remove server header
+        -Server
+    }
+
+    # API routes → Backend
+    handle /api/* {
+        # Strip /api prefix before forwarding
+        uri strip_prefix /api
+        reverse_proxy backend:8000 {
+            # Health check
+            health_uri /health
+            health_interval 30s
+            health_timeout 10s
+
+            # Headers
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+        }
+    }
+
+    # Auth routes → Backend (no prefix stripping)
+    handle /auth/* {
+        reverse_proxy backend:8000 {
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+        }
+    }
+
+    # Health check → Backend
+    handle /health {
+        reverse_proxy backend:8000
+    }
+
+    # Frontend → nginx container
+    handle {
+        reverse_proxy frontend:80
+    }
+
+    # Logging
+    log {
+        output stdout
+        format console
+        level INFO
+    }
+}

@@ -1,0 +1,48 @@
+<div
+  class="subscription-card animate-fade-in-up"
+  [style.animation-delay.ms]="animation_delay() * 60"
+  (click)="on_tap()"
+>
+  <!-- Color accent bar -->
+  <div class="color-bar" [style.background]="gradient_style()"></div>
+
+  <!-- Logo -->
+  <div class="card-icon">
+    @if (subscription().url) {
+      <img
+        [src]="logo_url()"
+        [alt]="subscription().name"
+        class="icon-image"
+        crossorigin="anonymous"
+        loading="lazy"
+      />
+    } @else {
+      <div class="icon-placeholder" [style.background]="gradient_style()">
+        <span class="icon-letter">{{ subscription().name.charAt(0).toUpperCase() }}</span>
+      </div>
+    }
+  </div>
+
+  <!-- Info -->
+  <div class="card-info">
+    <span class="card-name">{{ subscription().name }}</span>
+    <span class="card-meta">{{ subscription().cycle }} • {{ subscription().currency }}</span>
+  </div>
+
+  <!-- Price -->
+  <div class="card-price">
+    <span class="price-value">{{ formatted_price() }}</span>
+    <span class="price-cycle">/{{ cycle_short() }}</span>
+  </div>
+
+  <!-- Action buttons -->
+  <div class="card-actions">
+    <button class="action-btn" (click)="on_edit($event)" aria-label="Edit">
+      <ion-icon name="create-outline" />
+    </button>
+    <button class="action-btn action-btn-danger" (click)="on_delete($event)" aria-label="Delete">
+      <ion-icon name="trash-outline" />
+    </button>
+  </div>
+</div>
+

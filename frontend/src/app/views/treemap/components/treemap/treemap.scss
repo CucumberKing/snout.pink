@@ -1,0 +1,154 @@
+.treemap-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 28px;
+  background: #fafafa;
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.04),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+
+  @media (min-width: 640px) {
+    aspect-ratio: 4 / 3;
+  }
+}
+
+.empty-treemap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+  padding: 24px;
+
+  .empty-icon-wrapper {
+    width: 64px;
+    height: 64px;
+    background: #f0f0f0;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    color: #bbb;
+
+    ion-icon {
+      font-size: 32px;
+    }
+  }
+
+  p {
+    font-size: 15px;
+    color: #888;
+    margin: 0;
+    line-height: 1.4;
+  }
+}
+
+.voronoi-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.voronoi-cell {
+  cursor: pointer;
+  animation: cell-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+
+  &:hover .cell-path {
+    filter: url(#cell-shadow) brightness(1.03);
+    stroke-width: 3;
+  }
+
+  &:active {
+    transform: scale(0.98);
+    transform-origin: center;
+  }
+}
+
+.cell-path {
+  transition:
+    filter 0.2s ease,
+    stroke-width 0.2s ease;
+}
+
+.cell-content {
+  pointer-events: none;
+  overflow: visible;
+}
+
+.cell-inner {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 4px;
+  overflow: hidden;
+}
+
+.logo-wrapper {
+  border-radius: 12px;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.cell-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.logo-placeholder {
+  background: white;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: rgba(0, 0, 0, 0.35);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+}
+
+.text-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: 1px;
+}
+
+.cell-name {
+  font-weight: 600;
+  color: #1a1a1a;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cell-price {
+  font-weight: 800;
+  color: #000;
+  letter-spacing: -0.02em;
+}
+
+@keyframes cell-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+

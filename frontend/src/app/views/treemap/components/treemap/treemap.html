@@ -1,0 +1,99 @@
+<div #container class="treemap-wrapper">
+  @if (cells().length === 0) {
+    <div class="empty-treemap">
+      <div class="empty-icon-wrapper">
+        <ion-icon name="grid-outline" />
+      </div>
+      <p>Add subscriptions to generate<br />your cost visualization</p>
+    </div>
+  } @else {
+    <svg
+      class="voronoi-svg"
+      [attr.viewBox]="'0 0 ' + dimensions().width + ' ' + dimensions().height"
+      preserveAspectRatio="xMidYMid meet"
+    >
+      <defs>
+        <!-- Gradients for each cell -->
+        @for (cell of cells(); track cell.id) {
+          <linearGradient [id]="'grad-' + cell.id" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" [attr.stop-color]="get_color(cell).bg" />
+            <stop offset="100%" [attr.stop-color]="get_color(cell).accent" />
+          </linearGradient>
+        }
+
+        <!-- Subtle shadow filter -->
+        <filter id="cell-shadow" x="-10%" y="-10%" width="120%" height="120%">
+          <feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity="0.08" />
+        </filter>
+      </defs>
+
+      <!-- Render cells -->
+      @for (cell of cells(); track cell.id; let i = $index) {
+        <g class="voronoi-cell" [style.animation-delay.ms]="i * 35">
+          <!-- Cell shape -->
+          <path
+            [attr.d]="cell.path"
+            [attr.fill]="'url(#grad-' + cell.id + ')'"
+            stroke="rgba(255,255,255,0.5)"
+            stroke-width="2"
+            filter="url(#cell-shadow)"
+            class="cell-path"
+          />
+
+          <!-- Content positioned at centroid -->
+          <foreignObject
+            [attr.x]="cell.centroid[0] - get_style(cell).content_width / 2"
+            [attr.y]="cell.centroid[1] - get_style(cell).content_height / 2"
+            [attr.width]="get_style(cell).content_width"
+            [attr.height]="get_style(cell).content_height"
+            class="cell-content"
+          >
+            <div xmlns="http://www.w3.org/1999/xhtml" class="cell-inner">
+              <!-- Logo -->
+              @if (get_subscription(cell.id)?.url) {
+                <div
+                  class="logo-wrapper"
+                  [style.width.px]="get_style(cell).icon_size"
+                  [style.height.px]="get_style(cell).icon_size"
+                >
+                  <img
+                    [src]="get_logo_url(get_subscription(cell.id)!.url!)"
+                    [alt]="cell.name"
+                    class="cell-logo"
+                    crossorigin="anonymous"
+                    loading="lazy"
+                  />
+                </div>
+              } @else {
+                <div
+                  class="logo-placeholder"
+                  [style.width.px]="get_style(cell).icon_size"
+                  [style.height.px]="get_style(cell).icon_size"
+                  [style.font-size.px]="get_style(cell).icon_size * 0.5"
+                >
+                  {{ cell.name.charAt(0).toUpperCase() }}
+                </div>
+              }
+
+              <!-- Text content -->
+              @if (get_style(cell).show_name) {
+                <div class="text-content">
+                  <div class="cell-name" [style.font-size.px]="get_style(cell).font_size_name">
+                    {{ cell.name }}
+                  </div>
+
+                  @if (get_style(cell).show_price) {
+                    <div class="cell-price" [style.font-size.px]="get_style(cell).font_size_price">
+                      {{ format_price(cell) }}
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          </foreignObject>
+        </g>
+      }
+    </svg>
+  }
+</div>
+

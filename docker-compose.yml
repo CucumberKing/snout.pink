@@ -1,0 +1,116 @@
+# Docker Compose for Snout Pink
+# Production deployment with Caddy, Backend, Frontend, and MongoDB
+
+services:
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Caddy - Reverse Proxy with automatic HTTPS
+  # ─────────────────────────────────────────────────────────────────────────────
+  caddy:
+    image: caddy:2-alpine
+    container_name: snout-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"  # HTTP/3
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      backend:
+        condition: service_healthy
+      frontend:
+        condition: service_started
+    networks:
+      - snout-network
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Frontend - Angular with nginx
+  # ─────────────────────────────────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: snout-frontend
+    restart: unless-stopped
+    expose:
+      - "80"
+    networks:
+      - snout-network
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Backend - FastAPI with uv
+  # ─────────────────────────────────────────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: snout-backend
+    restart: unless-stopped
+    environment:
+      # Core settings
+      DEV: "false"
+      LOG_LEVEL: "INFO"
+      # MongoDB - internal Docker network
+      MONGO_URI: "mongodb://mongo:27017/snout"
+      # WebAuthn - MUST match your domain
+      RP_ID: "${RP_ID:-localhost}"
+      RP_NAME: "${RP_NAME:-Snout Pink}"
+      RP_ORIGIN: "${RP_ORIGIN:-https://localhost}"
+      # Session security
+      SESSION_COOKIE_SECURE: "true"
+      SESSION_COOKIE_NAME: "session"
+      SESSION_TTL_SECONDS: "604800"
+      # Logo.dev API
+      LOGO_DEV_TOKEN: "${LOGO_DEV_TOKEN:-}"
+      # Legal / About URLs (optional)
+      IMPRINT_URL: "${IMPRINT_URL:-}"
+      PRIVACY_URL: "${PRIVACY_URL:-}"
+      GITHUB_URL: "${GITHUB_URL:-}"
+    expose:
+      - "8000"
+    depends_on:
+      mongo:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - snout-network
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # MongoDB - Database
+  # ─────────────────────────────────────────────────────────────────────────────
+  mongo:
+    image: mongo:7
+    container_name: snout-mongo
+    restart: unless-stopped
+    volumes:
+      - mongo_data:/data/db
+    expose:
+      - "27017"
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 20s
+    networks:
+      - snout-network
+    # Security: MongoDB is not exposed to host, only accessible within Docker network
+
+networks:
+  snout-network:
+    driver: bridge
+
+volumes:
+  caddy_data:
+    name: snout_caddy_data
+  caddy_config:
+    name: snout_caddy_config
+  mongo_data:
+    name: snout_mongo_data

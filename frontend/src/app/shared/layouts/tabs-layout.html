@@ -1,0 +1,26 @@
+<ion-tabs>
+  <ion-tab-bar slot="bottom">
+    <ion-tab-button tab="subscriptions">
+      <ion-icon name="list-outline" />
+      <ion-label>Subscriptions</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button tab="treemap">
+      <ion-icon name="grid-outline" />
+      <ion-label>Grid</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button
+      [tab]="auth_service.is_authenticated() ? 'insights' : ''"
+      (click)="on_insights_click($event)"
+      [class.locked]="!auth_service.is_authenticated()"
+    >
+      @if (auth_service.is_authenticated()) {
+        <ion-icon name="stats-chart-outline" />
+      } @else {
+        <ion-icon name="lock-closed-outline" />
+      }
+      <ion-label>Insights</ion-label>
+    </ion-tab-button>
+  </ion-tab-bar>
+</ion-tabs>

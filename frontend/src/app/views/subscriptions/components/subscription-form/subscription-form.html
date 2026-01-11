@@ -1,0 +1,133 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-button slot="start" fill="clear" (click)="dismiss()">
+      <ion-icon slot="icon-only" name="close-outline" />
+    </ion-button>
+    <ion-title>{{ mode === 'add' ? 'Add Subscription' : 'Edit Subscription' }}</ion-title>
+    <ion-button
+      slot="end"
+      fill="clear"
+      [disabled]="!is_valid()"
+      (click)="save()"
+    >
+      <ion-icon slot="icon-only" name="checkmark-outline" />
+    </ion-button>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="form-wrapper">
+    <!-- Website URL -->
+    <div class="form-group animate-fade-in-up delay-1">
+      <label class="form-label">Website (Optional)</label>
+      <div class="url-input-wrapper" [class.has-favicon]="favicon_url()">
+        <div class="favicon-preview">
+          @if (favicon_url()) {
+            <img
+              [src]="favicon_url()"
+              alt="Logo"
+              class="favicon-img"
+              crossorigin="anonymous"
+              (load)="on_favicon_load($event)"
+            />
+          } @else {
+            <ion-icon name="globe-outline" />
+          }
+        </div>
+        <div class="url-input">
+          <ion-input
+            [(ngModel)]="form_data.url"
+            placeholder="netflix.com"
+            (ionInput)="update_favicon()"
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- Service Name -->
+    <div class="form-group animate-fade-in-up delay-2">
+      <label class="form-label">Service Name</label>
+      <ion-input
+        [(ngModel)]="form_data.name"
+        placeholder="e.g. Netflix"
+        class="form-input"
+      />
+    </div>
+
+    <!-- Price & Currency Row -->
+    <div class="form-row animate-fade-in-up delay-3">
+      <div class="form-group flex-2">
+        <label class="form-label">Price</label>
+        <ion-input
+          type="number"
+          [(ngModel)]="form_data.price"
+          placeholder="0.00"
+          [step]="0.01"
+          [min]="0"
+          class="form-input"
+        />
+      </div>
+      <div class="form-group flex-1">
+        <label class="form-label">Currency</label>
+        <ion-select
+          [(ngModel)]="form_data.currency"
+          interface="action-sheet"
+          class="form-select"
+        >
+          @for (curr of currency_service.currencies; track curr.code) {
+            <ion-select-option [value]="curr.code">
+              {{ curr.symbol }} {{ curr.code }}
+            </ion-select-option>
+          }
+        </ion-select>
+      </div>
+    </div>
+
+    <!-- Billing Cycle -->
+    <div class="form-group animate-fade-in-up delay-4">
+      <label class="form-label">Billing Cycle</label>
+      <ion-select
+        [(ngModel)]="form_data.cycle"
+        interface="action-sheet"
+        class="form-select"
+      >
+        <ion-select-option value="Monthly">Monthly</ion-select-option>
+        <ion-select-option value="Yearly">Yearly</ion-select-option>
+        <ion-select-option value="Weekly">Weekly</ion-select-option>
+      </ion-select>
+    </div>
+
+    <!-- Color Selector -->
+    <div class="form-group animate-fade-in-up delay-5">
+      <label class="form-label">Color</label>
+      <div class="color-grid">
+        @for (color of colors; track color.id) {
+          <button
+            type="button"
+            class="color-option"
+            [class.selected]="form_data.color === color.id"
+            [style.background]="get_gradient(color)"
+            (click)="select_color(color.id)"
+          >
+            @if (form_data.color === color.id) {
+              <ion-icon name="checkmark-outline" class="color-check" />
+            }
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- Save Button -->
+    <div class="form-actions animate-fade-in-up delay-6">
+      <ion-button
+        expand="block"
+        [disabled]="!is_valid()"
+        (click)="save()"
+        class="save-btn"
+      >
+        {{ mode === 'add' ? 'Save Subscription' : 'Save Changes' }}
+      </ion-button>
+    </div>
+  </div>
+</ion-content>
+

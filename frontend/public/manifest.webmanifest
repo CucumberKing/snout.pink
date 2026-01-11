@@ -1,0 +1,28 @@
+{
+  "name": "snout.pink - Subscription Cost Visualizer",
+  "short_name": "snout.pink",
+  "description": "Visualize your subscription costs with your cute piggy bank companion. See the true proportion of your monthly spending at a glance.",
+  "theme_color": "#F0CFC8",
+  "background_color": "#FAF7F5",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "start_url": "/",
+  "id": "/",
+  "categories": ["finance", "utilities", "productivity"],
+  "icons": [
+    {
+      "src": "icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "prefer_related_applications": false
+}

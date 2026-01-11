@@ -1,0 +1,114 @@
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+}
+
+.app-title {
+  font-size: var(--font-size-title-2);
+  font-weight: 800;
+  letter-spacing: 0;
+  color: #e88a9c;
+  margin: 0;
+}
+
+.content-wrapper {
+  min-height: 100%;
+  padding-bottom: 120px;
+}
+
+/* Empty State */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 48px 24px;
+  background: linear-gradient(180deg, rgba(240, 207, 200, 0.3) 0%, transparent 100%);
+  border-radius: var(--radius-2xl);
+  cursor: pointer;
+  transition: transform var(--duration-fast) var(--ease-spring);
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  h2 {
+    margin: 0 0 8px 0;
+    color: var(--ion-text-color);
+  }
+
+  p {
+    margin: 0 0 24px 0;
+    max-width: 240px;
+  }
+}
+
+.empty-state-icon {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--ion-color-primary) 0%, var(--ion-color-tertiary) 100%);
+  border-radius: 24px;
+  margin-bottom: 24px;
+
+  ion-icon {
+    font-size: 36px;
+    color: white;
+  }
+}
+
+.empty-state-btn {
+  --background: var(--ion-color-tertiary);
+  --color: white;
+  --border-radius: var(--radius-lg);
+  font-weight: 700;
+  min-width: 200px;
+}
+
+/* Section Headers */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.section-title {
+  font-size: var(--font-size-footnote);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ion-color-medium);
+}
+
+.section-count {
+  font-size: var(--font-size-footnote);
+  font-weight: 700;
+  color: var(--ion-color-primary);
+  background: rgba(232, 168, 156, 0.2);
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+}
+
+/* Subscriptions List */
+.subscriptions-section {
+  margin-top: 8px;
+}
+
+.subscription-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* FAB positioning */
+ion-fab {
+  margin-bottom: 80px;
+  margin-right: 4px;
+}
+

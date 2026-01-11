@@ -1,0 +1,47 @@
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 0;
+}
+
+.page-title {
+  font-size: var(--font-size-headline);
+  font-weight: 700;
+  color: var(--ion-text-color);
+  margin: 0;
+}
+
+.content-wrapper {
+  min-height: 100%;
+  padding-bottom: 120px;
+}
+
+.grid-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.totals-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--ion-card-background);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+  padding: 20px 24px;
+}
+
+.total-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.total-divider {
+  width: 1px;
+  height: 40px;
+  background: var(--ion-color-light);
+}
+

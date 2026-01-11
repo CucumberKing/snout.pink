@@ -1,0 +1,181 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-button slot="end" fill="clear" (click)="dismiss()">
+      <ion-icon slot="icon-only" name="close-outline" />
+    </ion-button>
+    <ion-title>Settings</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="settings-wrapper">
+    <!-- Account Section -->
+    <div class="settings-section animate-fade-in-up delay-1">
+      <div class="section-header">
+        <span class="section-title">Account</span>
+      </div>
+      <div class="settings-card">
+        @if (!auth_service.is_authenticated()) {
+          <!-- Not logged in -->
+          <div class="sync-promo">
+            <ion-icon name="cloud-done-outline" class="sync-promo-icon" />
+            <p class="helper-text">
+              Sign in to sync your subscriptions across devices
+            </p>
+          </div>
+          <ion-button expand="block" (click)="go_to_login()" class="login-btn">
+            <ion-icon slot="start" name="log-in-outline" />
+            Sign In / Create Account
+          </ion-button>
+        } @else {
+          <!-- Logged in -->
+          <div class="sync-status-row">
+            <div class="sync-info">
+              <ion-icon name="cloud-done-outline" class="sync-icon synced" />
+              <span class="sync-label">Synced to cloud</span>
+            </div>
+          </div>
+
+          <ion-button
+            expand="block"
+            fill="clear"
+            color="danger"
+            (click)="logout()"
+            class="logout-btn"
+          >
+            <ion-icon slot="start" name="log-out-outline" />
+            Sign Out
+          </ion-button>
+        }
+      </div>
+    </div>
+
+    <!-- Currency Section -->
+    <div class="settings-section animate-fade-in-up delay-2">
+      <div class="section-header">
+        <span class="section-title">Currency</span>
+      </div>
+      <div class="settings-card">
+        <ion-select
+          [value]="currency_service.selected_currency()"
+          (ionChange)="on_currency_change($event)"
+          interface="action-sheet"
+          class="currency-select"
+        >
+          @for (curr of currency_service.currencies; track curr.code) {
+            <ion-select-option [value]="curr.code">
+              {{ curr.symbol }} {{ curr.code }} - {{ curr.name }}
+            </ion-select-option>
+          }
+        </ion-select>
+        <p class="helper-text">Default currency for new subscriptions</p>
+      </div>
+    </div>
+
+    <!-- Import/Export Section -->
+    <div class="settings-section animate-fade-in-up delay-3">
+      <div class="section-header">
+        <span class="section-title">Local Backup</span>
+      </div>
+      <div class="settings-card">
+        <p class="helper-text" style="margin-bottom: 16px">
+          Export or import subscriptions as a JSON file
+        </p>
+
+        <div class="button-row">
+          <ion-button expand="block" fill="outline" (click)="export_data()" class="data-btn">
+            <ion-icon slot="start" name="download-outline" />
+            Export
+          </ion-button>
+
+          <label class="import-btn-label">
+            <ion-button expand="block" fill="outline" class="data-btn">
+              <ion-icon slot="start" name="cloud-upload-outline" />
+              Import
+            </ion-button>
+            <input type="file" accept=".json" (change)="handle_import($event)" class="sr-only" />
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Import Status -->
+    @if (import_status()) {
+      <div
+        class="status-message animate-fade-in-up"
+        [class.success]="import_status()!.success"
+        [class.error]="!import_status()!.success"
+      >
+        <ion-icon
+          [name]="import_status()!.success ? 'checkmark-circle-outline' : 'alert-circle-outline'"
+        />
+        <span>
+          @if (import_status()!.success) {
+            Imported {{ import_status()!.count }} subscription(s)
+          } @else {
+            {{ import_status()!.error }}
+          }
+        </span>
+      </div>
+    }
+
+    <!-- About Section -->
+    <div class="settings-section animate-fade-in-up delay-4">
+      <div class="section-header">
+        <span class="section-title">About</span>
+      </div>
+      <div class="about-card">
+        <div class="about-header">
+          <div class="about-logo">
+            <img src="icons/icon-96x96.png" alt="snout.pink logo" />
+          </div>
+          <div class="about-info">
+            <h3 class="about-title">snout.pink</h3>
+            <p class="about-subtitle">Subscription Cost Visualizer</p>
+          </div>
+        </div>
+        <p class="about-text">
+          An open-source hobby project to visualize your subscription costs. Works fully offline - no account needed. Optional passkey login for cross-device sync. No personal data collected, but as a hobby project, don't store anything sensitive here.
+        </p>
+
+        @if (app_info_service.has_any_link()) {
+          <div class="about-links">
+            @if (app_info_service.app_info()?.imprint_url) {
+              <a
+                [href]="app_info_service.app_info()!.imprint_url"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="about-link"
+              >
+                <ion-icon name="open-outline" />
+                Impressum
+              </a>
+            }
+            @if (app_info_service.app_info()?.privacy_url) {
+              <a
+                [href]="app_info_service.app_info()!.privacy_url"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="about-link"
+              >
+                <ion-icon name="open-outline" />
+                Datenschutz
+              </a>
+            }
+            @if (app_info_service.app_info()?.github_url) {
+              <a
+                [href]="app_info_service.app_info()!.github_url"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="about-link"
+              >
+                <ion-icon name="logo-github" />
+                GitHub
+              </a>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</ion-content>

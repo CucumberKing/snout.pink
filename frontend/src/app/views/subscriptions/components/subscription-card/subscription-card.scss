@@ -1,0 +1,151 @@
+.subscription-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  padding-left: 20px;
+  background: var(--ion-card-background);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  cursor: pointer;
+  transition:
+    transform 150ms var(--ease-spring),
+    box-shadow 200ms ease;
+  margin-bottom: 12px;
+  overflow: hidden;
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  &:hover {
+    box-shadow: var(--shadow-md);
+  }
+}
+
+.color-bar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 5px;
+  border-radius: 0;
+}
+
+.card-icon {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+}
+
+.icon-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: var(--radius-md);
+  background: var(--ion-color-light);
+}
+
+.icon-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+}
+
+.icon-letter {
+  font-size: 20px;
+  font-weight: 700;
+  color: rgba(93, 66, 69, 0.6);
+}
+
+.card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.card-name {
+  font-size: var(--font-size-body);
+  font-weight: 600;
+  color: var(--ion-text-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-meta {
+  font-size: var(--font-size-footnote);
+  color: var(--ion-color-medium);
+}
+
+.card-price {
+  display: flex;
+  align-items: baseline;
+  gap: 1px;
+  flex-shrink: 0;
+}
+
+.price-value {
+  font-size: var(--font-size-body);
+  font-weight: 700;
+  color: var(--ion-text-color);
+}
+
+.price-cycle {
+  font-size: var(--font-size-caption-1);
+  color: var(--ion-color-medium);
+}
+
+.card-actions {
+  display: flex;
+  gap: 4px;
+  margin-left: 8px;
+  flex-shrink: 0;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: var(--ion-color-light);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition:
+    background 150ms ease,
+    transform 150ms var(--ease-spring);
+
+  ion-icon {
+    font-size: 18px;
+    color: var(--ion-color-medium);
+  }
+
+  &:active {
+    transform: scale(0.9);
+  }
+
+  &:hover {
+    background: var(--ion-color-secondary);
+
+    ion-icon {
+      color: var(--ion-color-primary);
+    }
+  }
+
+  &.action-btn-danger:hover {
+    background: rgba(217, 136, 128, 0.15);
+
+    ion-icon {
+      color: var(--ion-color-danger);
+    }
+  }
+}
+

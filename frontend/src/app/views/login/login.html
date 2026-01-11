@@ -1,0 +1,62 @@
+<ion-content class="login-content">
+  <div class="login-wrapper">
+    <!-- Logo & Title -->
+    <div class="login-header">
+      <div class="logo-container">
+        <div class="logo-glow"></div>
+        <div class="logo">
+          <img src="icons/icon-192x192.png" alt="snout.pink logo" class="logo-icon" />
+        </div>
+      </div>
+      <h1 class="app-name">snout.pink</h1>
+      <p class="app-tagline">Track your subscriptions beautifully</p>
+    </div>
+
+    <!-- Auth Buttons -->
+    <div class="auth-section">
+      @if (auth_service.error()) {
+        <div class="error-message">
+          <ion-icon name="alert-circle-outline" />
+          <span>{{ auth_service.error() }}</span>
+        </div>
+      }
+
+      <ion-button
+        expand="block"
+        class="login-btn primary-btn"
+        [disabled]="auth_service.loading()"
+        (click)="login()"
+      >
+        @if (auth_service.loading()) {
+          <ion-spinner name="crescent" />
+        } @else {
+          <ion-icon slot="start" name="finger-print-outline" />
+          Sign in with Passkey
+        }
+      </ion-button>
+
+      <div class="divider">
+        <span>or</span>
+      </div>
+
+      <ion-button
+        expand="block"
+        fill="outline"
+        class="register-btn"
+        [disabled]="auth_service.loading()"
+        (click)="register()"
+      >
+        <ion-icon slot="start" name="person-add-outline" />
+        Create Account
+      </ion-button>
+    </div>
+
+    <!-- Info -->
+    <div class="info-section">
+      <p class="info-text">
+        Passkeys are a secure, passwordless way to sign in using your device's biometrics or PIN.
+      </p>
+    </div>
+  </div>
+</ion-content>
+

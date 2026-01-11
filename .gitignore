@@ -1,0 +1,14 @@
+.DS_Store
+examples/
+
+# Environment files (keep .env.example)
+.env
+.env.local
+.env.*.local
+
+# Docker volumes
+mongo_data/
+
+.claude/
+.cursor/
+.vscode/
