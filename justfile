@@ -28,4 +28,4 @@ stop_local_mongo:
 
 # Build Docker containers
 build:
-    docker compose build
+    sh build.sh
