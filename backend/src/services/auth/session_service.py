@@ -70,19 +70,37 @@ def clear_session_cookie(response: Response) -> None:
 
 async def find_credential_by_id(credential_id: str) -> PasskeyCredential | None:
     """Find a passkey credential by its ID."""
-    return await PasskeyCredential.find_one(
+    # Beanie 2.x bug: find_one(fetch_links=True), fetch_all_links(), and even
+    # Link.fetch(fetch_links=True) use aggregation pipelines that return cursors.
+    # Workaround: fetch credential first, then manually fetch the linked user.
+    credential = await PasskeyCredential.find_one(
         PasskeyCredential.credential_id == credential_id,
-        fetch_links=True,
     )
+    if credential:
+        # Manually fetch the linked user
+        credential.user = await _fetch_user_link(credential.user)
+    return credential
+
+
+async def _fetch_user_link(user_link) -> User | None:
+    """
+    Manually fetch a User from a Link without using Beanie's broken fetch_links.
+
+    Beanie 2.x has a bug where aggregation pipelines return cursors instead of
+    documents. This affects find_one(fetch_links=True), fetch_all_links(), and
+    Link.fetch(fetch_links=True).
+    """
+    if isinstance(user_link, User):
+        return user_link
+    # It's a Link - extract the document ID and fetch directly
+    if hasattr(user_link, "ref") and user_link.ref:
+        return await User.get(user_link.ref.id)
+    return None
 
 
 async def get_user_from_credential(credential: PasskeyCredential) -> User | None:
     """Get the user associated with a credential."""
-    user = credential.user
-    if isinstance(user, User):
-        return user
-    # If it's a Link, fetch the user
-    return await credential.user.fetch()
+    return await _fetch_user_link(credential.user)
 
 
 async def begin_registration() -> tuple[User, dict]:

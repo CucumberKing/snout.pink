@@ -152,18 +152,25 @@ async def login_complete(
             detail=str(e),
         ) from e
 
-    # Update sign count atomically to prevent race conditions
-    update_result = await PasskeyCredential.find_one(
-        PasskeyCredential.credential_id == credential.credential_id,
-        PasskeyCredential.sign_count == credential.sign_count,  # Optimistic lock
-    ).update({"$set": {"sign_count": verified.new_sign_count}})
-
-    if not update_result or update_result.modified_count == 0:
-        log.warning("sign_count_update_conflict", credential_id=credential.credential_id[:16])
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail="Authentication conflict, please try again",
+    # WebAuthn replay attack protection:
+    # new_sign_count must be > stored sign_count (authenticators can increment by >1)
+    # If new_sign_count <= stored, it could be a cloned authenticator replay attack
+    if verified.new_sign_count <= credential.sign_count and credential.sign_count > 0:
+        log.warning(
+            "sign_count_replay_detected",
+            credential_id=credential.credential_id[:16],
+            stored_count=credential.sign_count,
+            received_count=verified.new_sign_count,
         )
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Possible replay attack detected",
+        )
+
+    # Update sign count (no strict optimistic lock - just update to new value)
+    await PasskeyCredential.find(
+        PasskeyCredential.credential_id == credential.credential_id,
+    ).update({"$set": {"sign_count": verified.new_sign_count}})
 
     # Get user and create session
     user = await get_user_from_credential(credential)

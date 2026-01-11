@@ -54,13 +54,17 @@ async def test_get_logo_expired_cache(client: AsyncClient, test_db):
     with patch("services.logo.logo_service.settings") as mock_settings:
         mock_settings.logo_dev_token = "test_token"
 
-        with patch("httpx.AsyncClient.get") as mock_get:
-            mock_response = AsyncMock()
-            mock_response.status_code = 200
-            mock_response.content = b"new_png_data"
-            mock_response.headers = {"content-type": "image/png"}
-            mock_get.return_value = mock_response
+        mock_response = AsyncMock()
+        mock_response.status_code = 200
+        mock_response.content = b"new_png_data"
+        mock_response.headers = {"content-type": "image/png"}
 
+        mock_http_client = AsyncMock()
+        mock_http_client.get.return_value = mock_response
+        mock_http_client.__aenter__.return_value = mock_http_client
+        mock_http_client.__aexit__.return_value = None
+
+        with patch("services.logo.logo_service.httpx.AsyncClient", return_value=mock_http_client):
             response = await client.get("/logos/expired.com")
 
             # Should have fetched new data
@@ -74,13 +78,17 @@ async def test_get_logo_cache_miss_fetches_from_api(client: AsyncClient, test_db
     with patch("services.logo.logo_service.settings") as mock_settings:
         mock_settings.logo_dev_token = "test_token"
 
-        with patch("httpx.AsyncClient.get") as mock_get:
-            mock_response = AsyncMock()
-            mock_response.status_code = 200
-            mock_response.content = b"api_png_data"
-            mock_response.headers = {"content-type": "image/png"}
-            mock_get.return_value = mock_response
+        mock_response = AsyncMock()
+        mock_response.status_code = 200
+        mock_response.content = b"api_png_data"
+        mock_response.headers = {"content-type": "image/png"}
 
+        mock_http_client = AsyncMock()
+        mock_http_client.get.return_value = mock_response
+        mock_http_client.__aenter__.return_value = mock_http_client
+        mock_http_client.__aexit__.return_value = None
+
+        with patch("services.logo.logo_service.httpx.AsyncClient", return_value=mock_http_client):
             response = await client.get("/logos/newdomain.com")
 
             assert response.status_code == 200
@@ -98,11 +106,15 @@ async def test_get_logo_api_error_returns_404(client: AsyncClient, test_db):
     with patch("services.logo.logo_service.settings") as mock_settings:
         mock_settings.logo_dev_token = "test_token"
 
-        with patch("httpx.AsyncClient.get") as mock_get:
-            mock_response = AsyncMock()
-            mock_response.status_code = 404
-            mock_get.return_value = mock_response
+        mock_response = AsyncMock()
+        mock_response.status_code = 404
 
+        mock_http_client = AsyncMock()
+        mock_http_client.get.return_value = mock_response
+        mock_http_client.__aenter__.return_value = mock_http_client
+        mock_http_client.__aexit__.return_value = None
+
+        with patch("services.logo.logo_service.httpx.AsyncClient", return_value=mock_http_client):
             response = await client.get("/logos/nonexistent.com")
 
             assert response.status_code == 404
