@@ -2,6 +2,16 @@
 
 A subscription tracking application with passkey authentication. Track your recurring subscriptions, visualize spending with interactive treemaps, and manage your services in one place.
 
+**Try it out:** [snout.pink](https://snout.pink)
+
+## Screenshots
+
+<p align="center">
+  <img src="docs/screenshot_02.png" width="250" alt="Subscription List" />
+  <img src="docs/screenshot_01.png" width="250" alt="Cost Grid" />
+  <img src="docs/screenshot_03.png" width="250" alt="Insights" />
+</p>
+
 ## Features
 
 - **Passkey Authentication** - Passwordless login using WebAuthn/FIDO2
