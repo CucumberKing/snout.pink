@@ -1,4 +1,4 @@
-import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy, viewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -67,6 +67,8 @@ export class SettingsModalComponent {
     error?: string;
   } | null>(null);
 
+  private readonly file_input = viewChild<ElementRef<HTMLInputElement>>('file_input');
+
   constructor() {
     addIcons({
       closeOutline,
@@ -133,19 +135,23 @@ export class SettingsModalComponent {
     URL.revokeObjectURL(url);
   }
 
+  protected trigger_import(): void {
+    this.file_input()?.nativeElement.click();
+  }
+
   protected handle_import(event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
     if (!file) return;
 
     const reader = new FileReader();
-    reader.onload = (e) => {
+    reader.onload = async (e) => {
       const content = e.target?.result as string;
       if (content) {
         try {
           const parsed = JSON.parse(content);
           const subscriptions = parsed.subscriptions ?? [];
-          const result = this.subscription_service.import_data(subscriptions, true);
+          const result = await this.subscription_service.import_data(subscriptions, true);
           this.import_status.set(result);
 
           if (result.success) {

@@ -338,38 +338,93 @@ export class SubscriptionService {
   // Import/Export (local backup)
   // ============================================
 
-  import_data(
+  async import_data(
     subscriptions: SubscriptionCreateInput[],
     replace = true
-  ): { success: boolean; count: number; error?: string } {
+  ): Promise<{ success: boolean; count: number; error?: string }> {
     try {
-      const now = Date.now() / 1000;
-      const new_subs: Subscription[] = subscriptions.map((input) => ({
-        subscription_id: generate_local_id(),
-        user_id: 'local',
-        name: input.name,
-        price: input.price,
-        currency: input.currency,
-        cycle: input.cycle,
-        url: input.url,
-        color: input.color || random_color(),
-        created_ts: now,
-        updated_ts: now,
-      }));
+      if (this._is_authenticated()) {
+        return await this.import_data_remote(subscriptions, replace);
+      }
+      return this.import_data_local(subscriptions, replace);
+    } catch (err) {
+      console.error('Failed to import subscriptions:', err);
+      return { success: false, count: 0, error: 'Failed to import' };
+    }
+  }
 
+  private import_data_local(
+    subscriptions: SubscriptionCreateInput[],
+    replace: boolean
+  ): { success: boolean; count: number; error?: string } {
+    const now = Date.now() / 1000;
+    const new_subs: Subscription[] = subscriptions.map((input) => ({
+      subscription_id: generate_local_id(),
+      user_id: 'local',
+      name: input.name,
+      price: input.price,
+      currency: input.currency,
+      cycle: input.cycle,
+      url: input.url,
+      color: input.color || random_color(),
+      created_ts: now,
+      updated_ts: now,
+    }));
+
+    if (replace) {
+      this._subscriptions.set(new_subs);
+    } else {
+      this._subscriptions.update((subs) => [...subs, ...new_subs]);
+    }
+
+    this.recalculate_totals();
+    this.save_to_storage();
+
+    return { success: true, count: new_subs.length };
+  }
+
+  private async import_data_remote(
+    subscriptions: SubscriptionCreateInput[],
+    replace: boolean
+  ): Promise<{ success: boolean; count: number; error?: string }> {
+    this._loading.set(true);
+    try {
+      // If replacing, delete all existing subscriptions first
       if (replace) {
-        this._subscriptions.set(new_subs);
+        const existing = this._subscriptions();
+        for (const sub of existing) {
+          await firstValueFrom(
+            this.http.delete(`${this.api_url}/${sub.subscription_id}`, { withCredentials: true })
+          );
+        }
+      }
+
+      // Create all new subscriptions on server
+      const created: Subscription[] = [];
+      for (const input of subscriptions) {
+        const subscription = await firstValueFrom(
+          this.http.post<Subscription>(this.api_url, input, { withCredentials: true })
+        );
+        created.push(subscription);
+      }
+
+      // Update local state
+      if (replace) {
+        this._subscriptions.set(created);
       } else {
-        this._subscriptions.update((subs) => [...subs, ...new_subs]);
+        this._subscriptions.update((subs) => [...subs, ...created]);
       }
 
       this.recalculate_totals();
       this.save_to_storage();
 
-      return { success: true, count: new_subs.length };
+      return { success: true, count: created.length };
     } catch (err) {
-      console.error('Failed to import subscriptions:', err);
-      return { success: false, count: 0, error: 'Failed to import' };
+      console.error('Failed to import to server:', err);
+      // Fallback to local import
+      return this.import_data_local(subscriptions, replace);
+    } finally {
+      this._loading.set(false);
     }
   }
 

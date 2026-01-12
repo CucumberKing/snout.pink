@@ -88,13 +88,17 @@
             Export
           </ion-button>
 
-          <label class="import-btn-label">
-            <ion-button expand="block" fill="outline" class="data-btn">
-              <ion-icon slot="start" name="cloud-upload-outline" />
-              Import
-            </ion-button>
-            <input type="file" accept=".json" (change)="handle_import($event)" class="sr-only" />
-          </label>
+          <ion-button expand="block" fill="outline" class="data-btn" (click)="trigger_import()">
+            <ion-icon slot="start" name="cloud-upload-outline" />
+            Import
+          </ion-button>
+          <input
+            #file_input
+            type="file"
+            accept=".json"
+            (change)="handle_import($event)"
+            class="sr-only"
+          />
         </div>
       </div>
     </div>
