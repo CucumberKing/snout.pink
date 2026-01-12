@@ -6,6 +6,14 @@ import structlog
 from config.config import settings
 
 
+class HealthCheckFilter(logging.Filter):
+    """Filter to suppress health check endpoint logs."""
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        """Return False to suppress health check logs."""
+        return "/health" not in record.getMessage()
+
+
 def get_log_level() -> int:
     """Convert string log level to logging constant."""
     level_map = {
@@ -81,6 +89,9 @@ def configure_logging() -> None:
         logger = logging.getLogger(logger_name)
         logger.handlers.clear()
         logger.propagate = True  # Use root logger's handler
+
+    # Filter out noisy health check logs from uvicorn access
+    logging.getLogger("uvicorn.access").addFilter(HealthCheckFilter())
 
     # Quiet down noisy third-party loggers
     logging.getLogger("pymongo").setLevel(logging.WARNING)
