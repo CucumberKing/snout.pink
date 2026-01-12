@@ -8,7 +8,11 @@ import {
   IonIcon,
   IonFab,
   IonFabButton,
+  IonRefresher,
+  IonRefresherContent,
   ModalController,
+  ViewWillEnter,
+  RefresherCustomEvent,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { addOutline, settingsOutline, arrowForwardOutline } from 'ionicons/icons';
@@ -31,18 +35,29 @@ import { Subscription } from '../../models/subscription.model';
     IonIcon,
     IonFab,
     IonFabButton,
+    IonRefresher,
+    IonRefresherContent,
     SubscriptionCardComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './subscriptions.html',
   styleUrl: './subscriptions.scss',
 })
-export class SubscriptionsComponent {
+export class SubscriptionsComponent implements ViewWillEnter {
   private readonly modal_controller = inject(ModalController);
   protected readonly subscription_service = inject(SubscriptionService);
 
   constructor() {
     addIcons({ addOutline, settingsOutline, arrowForwardOutline });
+  }
+
+  ionViewWillEnter(): void {
+    this.subscription_service.refresh();
+  }
+
+  protected async handle_refresh(event: RefresherCustomEvent): Promise<void> {
+    await this.subscription_service.refresh();
+    event.target.complete();
   }
 
   protected async open_add_subscription(): Promise<void> {

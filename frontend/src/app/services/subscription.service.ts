@@ -63,6 +63,15 @@ export class SubscriptionService {
     // Data stays in localStorage, user can continue using locally
   }
 
+  /**
+   * Refresh data from server (if authenticated)
+   */
+  async refresh(): Promise<void> {
+    if (this._is_authenticated()) {
+      await this.load_from_server();
+    }
+  }
+
   // ============================================
   // CRUD Operations (auto-sync when authenticated)
   // ============================================
