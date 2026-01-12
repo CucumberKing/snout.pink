@@ -112,3 +112,8 @@ ion-fab {
   margin-right: 4px;
 }
 
+/* Pull to refresh */
+ion-refresher-content {
+  --color: var(--ion-color-primary);
+}
+

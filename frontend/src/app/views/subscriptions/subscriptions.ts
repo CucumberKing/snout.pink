@@ -15,7 +15,7 @@ import {
   RefresherCustomEvent,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { addOutline, settingsOutline, arrowForwardOutline } from 'ionicons/icons';
+import { addOutline, settingsOutline, arrowForwardOutline, arrowDownOutline } from 'ionicons/icons';
 
 import { SubscriptionService } from '../../services/subscription.service';
 import { SubscriptionCardComponent } from './components/subscription-card/subscription-card';
@@ -48,7 +48,7 @@ export class SubscriptionsComponent implements ViewWillEnter {
   protected readonly subscription_service = inject(SubscriptionService);
 
   constructor() {
-    addIcons({ addOutline, settingsOutline, arrowForwardOutline });
+    addIcons({ addOutline, settingsOutline, arrowForwardOutline, arrowDownOutline });
   }
 
   ionViewWillEnter(): void {
