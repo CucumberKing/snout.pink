@@ -1,6 +1,6 @@
 import { Component, input, output, inject, ChangeDetectionStrategy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonIcon } from '@ionic/angular/standalone';
+import { IonIcon, AlertController } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { createOutline, trashOutline } from 'ionicons/icons';
 import { Haptics, ImpactStyle } from '@capacitor/haptics';
@@ -19,6 +19,7 @@ import { environment } from '../../../../../environments/environment';
 })
 export class SubscriptionCardComponent {
   private readonly currency_service = inject(CurrencyService);
+  private readonly alert_controller = inject(AlertController);
 
   subscription = input.required<Subscription>();
   animation_delay = input<number>(0);
@@ -74,7 +75,27 @@ export class SubscriptionCardComponent {
   protected async on_delete(event: Event): Promise<void> {
     event.stopPropagation();
     await this.trigger_haptic();
-    this.delete.emit(this.subscription());
+
+    const sub = this.subscription();
+    const alert = await this.alert_controller.create({
+      header: 'Delete Subscription',
+      message: `Are you sure you want to delete "${sub.name}"?`,
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+        },
+        {
+          text: 'Delete',
+          role: 'destructive',
+          handler: () => {
+            this.delete.emit(sub);
+          },
+        },
+      ],
+    });
+
+    await alert.present();
   }
 
   private async trigger_haptic(): Promise<void> {

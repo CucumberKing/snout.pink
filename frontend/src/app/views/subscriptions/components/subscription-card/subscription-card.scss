@@ -82,6 +82,9 @@
 .card-meta {
   font-size: var(--font-size-footnote);
   color: var(--ion-color-medium);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .card-price {
