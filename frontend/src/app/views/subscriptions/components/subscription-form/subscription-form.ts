@@ -61,6 +61,7 @@ export class SubscriptionFormComponent implements OnInit {
   protected readonly colors = SUBSCRIPTION_COLORS;
   protected readonly favicon_url = signal<string>('');
   protected readonly favicon_failed = signal(false);
+  protected readonly price_display = signal<string>('');
   private favicon_debounce: ReturnType<typeof setTimeout> | null = null;
 
   protected form_data = {
@@ -92,6 +93,7 @@ export class SubscriptionFormComponent implements OnInit {
           ? this.ts_to_date_string(this.subscription.earliest_cancellation_ts)
           : '',
       };
+      this.price_display.set(this.subscription.price.toString());
       this.update_favicon();
     }
   }
@@ -157,6 +159,14 @@ export class SubscriptionFormComponent implements OnInit {
 
   protected is_valid(): boolean {
     return this.form_data.name.trim().length > 0 && this.form_data.price > 0;
+  }
+
+  protected on_price_input(value: string): void {
+    this.price_display.set(value);
+    // Accept both comma and dot as decimal separator
+    const normalized = value.replace(',', '.');
+    const parsed = parseFloat(normalized);
+    this.form_data.price = isNaN(parsed) ? 0 : parsed;
   }
 
   private ts_to_date_string(ts: number): string {
