@@ -14,6 +14,7 @@ class SubscriptionResponse(BaseModel):
     cycle: BillingCycle
     url: str | None
     color: SubscriptionColor
+    earliest_cancellation_ts: float | None
     created_ts: float
     updated_ts: float
 
@@ -27,6 +28,7 @@ class SubscriptionCreateRequest(BaseModel):
     cycle: BillingCycle
     url: str | None = Field(default=None, max_length=500)
     color: SubscriptionColor
+    earliest_cancellation_ts: float | None = Field(default=None)
 
 
 class SubscriptionUpdateRequest(BaseModel):
@@ -38,6 +40,7 @@ class SubscriptionUpdateRequest(BaseModel):
     cycle: BillingCycle | None = None
     url: str | None = Field(default=None, max_length=500)
     color: SubscriptionColor | None = None
+    earliest_cancellation_ts: float | None = Field(default=None)
 
 
 class SubscriptionListResponse(BaseModel):

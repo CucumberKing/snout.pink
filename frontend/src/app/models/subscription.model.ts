@@ -11,6 +11,7 @@ export interface Subscription {
   cycle: BillingCycle;
   url?: string | null;
   color: SubscriptionColor;
+  earliest_cancellation_ts?: number | null;
   created_ts: number;
   updated_ts: number;
 }
@@ -25,6 +26,7 @@ export interface SubscriptionCreateInput {
   cycle: BillingCycle;
   url?: string | null;
   color: SubscriptionColor;
+  earliest_cancellation_ts?: number | null;
 }
 
 /**
@@ -37,6 +39,7 @@ export interface SubscriptionUpdateInput {
   cycle?: BillingCycle;
   url?: string | null;
   color?: SubscriptionColor;
+  earliest_cancellation_ts?: number | null;
 }
 
 /**

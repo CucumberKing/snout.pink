@@ -60,6 +60,7 @@ export class SubscriptionFormComponent implements OnInit {
 
   protected readonly colors = SUBSCRIPTION_COLORS;
   protected readonly favicon_url = signal<string>('');
+  protected readonly favicon_failed = signal(false);
   private favicon_debounce: ReturnType<typeof setTimeout> | null = null;
 
   protected form_data = {
@@ -69,6 +70,7 @@ export class SubscriptionFormComponent implements OnInit {
     cycle: 'Monthly' as BillingCycle,
     url: '',
     color: random_color(),
+    earliest_cancellation_date: '',
   };
 
   constructor() {
@@ -86,6 +88,9 @@ export class SubscriptionFormComponent implements OnInit {
         cycle: this.subscription.cycle,
         url: this.subscription.url ?? '',
         color: this.subscription.color,
+        earliest_cancellation_date: this.subscription.earliest_cancellation_ts
+          ? this.ts_to_date_string(this.subscription.earliest_cancellation_ts)
+          : '',
       };
       this.update_favicon();
     }
@@ -104,11 +109,13 @@ export class SubscriptionFormComponent implements OnInit {
       const url = this.form_data.url;
       if (!url || url.length < 4) {
         this.favicon_url.set('');
+        this.favicon_failed.set(false);
         return;
       }
 
       const domain = url.replace(/^(https?:\/\/)?(www\.)?/, '').split('/')[0];
       if (domain.length > 3) {
+        this.favicon_failed.set(false);
         this.favicon_url.set(`${environment.api_url}/logos/${domain}`);
 
         // Auto-fill name from domain if name is empty (only in add mode)
@@ -118,6 +125,10 @@ export class SubscriptionFormComponent implements OnInit {
         }
       }
     }, 400);
+  }
+
+  protected on_favicon_error(): void {
+    this.favicon_failed.set(true);
   }
 
   protected on_favicon_load(event: Event): void {
@@ -148,6 +159,21 @@ export class SubscriptionFormComponent implements OnInit {
     return this.form_data.name.trim().length > 0 && this.form_data.price > 0;
   }
 
+  private ts_to_date_string(ts: number): string {
+    const date = new Date(ts * 1000);
+    return date.toISOString().split('T')[0];
+  }
+
+  private date_string_to_ts(date_str: string): number | undefined {
+    if (!date_str) return undefined;
+    const date = new Date(date_str);
+    return Math.floor(date.getTime() / 1000);
+  }
+
+  protected clear_cancellation_date(): void {
+    this.form_data.earliest_cancellation_date = '';
+  }
+
   protected async save(): Promise<void> {
     if (!this.is_valid()) return;
 
@@ -157,6 +183,8 @@ export class SubscriptionFormComponent implements OnInit {
       // Haptics not available
     }
 
+    const cancellation_ts = this.date_string_to_ts(this.form_data.earliest_cancellation_date);
+
     if (this.mode === 'add') {
       this.subscription_service.add({
         name: this.form_data.name.trim(),
@@ -165,6 +193,7 @@ export class SubscriptionFormComponent implements OnInit {
         cycle: this.form_data.cycle,
         url: this.form_data.url.trim() || undefined,
         color: this.form_data.color,
+        earliest_cancellation_ts: cancellation_ts,
       });
     } else if (this.subscription) {
       this.subscription_service.update(this.subscription.subscription_id, {
@@ -174,6 +203,7 @@ export class SubscriptionFormComponent implements OnInit {
         cycle: this.form_data.cycle,
         url: this.form_data.url.trim() || undefined,
         color: this.form_data.color,
+        earliest_cancellation_ts: cancellation_ts,
       });
     }
 

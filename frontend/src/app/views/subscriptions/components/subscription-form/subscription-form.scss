@@ -95,6 +95,23 @@ ion-header {
   object-fit: cover;
 }
 
+/* Date Input with Clear Button */
+.date-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  ion-input {
+    flex: 1;
+  }
+
+  ion-button {
+    --padding-start: 8px;
+    --padding-end: 8px;
+    margin: 0;
+  }
+}
+
 /* Inputs */
 .form-input,
 .form-select {

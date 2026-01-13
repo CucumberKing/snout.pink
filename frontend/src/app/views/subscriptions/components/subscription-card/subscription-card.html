@@ -8,13 +8,14 @@
 
   <!-- Logo -->
   <div class="card-icon">
-    @if (subscription().url) {
+    @if (subscription().url && !logo_failed()) {
       <img
         [src]="logo_url()"
         [alt]="subscription().name"
         class="icon-image"
         crossorigin="anonymous"
         loading="lazy"
+        (error)="on_logo_error()"
       />
     } @else {
       <div class="icon-placeholder" [style.background]="gradient_style()">

@@ -41,6 +41,7 @@ class Subscription(Document):
     cycle: BillingCycle = Field(...)
     url: str | None = Field(default=None)
     color: SubscriptionColor = Field(...)
+    earliest_cancellation_ts: float | None = Field(default=None)
     created_ts: float = Field(default_factory=time.time)
     updated_ts: float = Field(default_factory=time.time)
 

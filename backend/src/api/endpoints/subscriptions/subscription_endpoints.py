@@ -31,6 +31,7 @@ def subscription_to_response(sub: Subscription) -> SubscriptionResponse:
         cycle=sub.cycle,
         url=sub.url,
         color=sub.color,
+        earliest_cancellation_ts=sub.earliest_cancellation_ts,
         created_ts=sub.created_ts,
         updated_ts=sub.updated_ts,
     )
@@ -78,6 +79,7 @@ async def create_subscription(
         cycle=request.cycle,
         url=request.url,
         color=request.color,
+        earliest_cancellation_ts=request.earliest_cancellation_ts,
     )
 
     await subscription.insert()
@@ -146,6 +148,8 @@ async def update_subscription(
         subscription.url = request.url
     if request.color is not None:
         subscription.color = request.color
+    if request.earliest_cancellation_ts is not None:
+        subscription.earliest_cancellation_ts = request.earliest_cancellation_ts
 
     subscription.update_timestamp()
     await subscription.save()
@@ -214,6 +218,7 @@ async def import_subscriptions(
             cycle=sub_data.cycle,
             url=sub_data.url,
             color=sub_data.color,
+            earliest_cancellation_ts=sub_data.earliest_cancellation_ts,
         )
         await subscription.insert()
         imported_count += 1

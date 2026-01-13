@@ -22,13 +22,14 @@
       <label class="form-label">Website (Optional)</label>
       <div class="url-input-wrapper" [class.has-favicon]="favicon_url()">
         <div class="favicon-preview">
-          @if (favicon_url()) {
+          @if (favicon_url() && !favicon_failed()) {
             <img
               [src]="favicon_url()"
               alt="Logo"
               class="favicon-img"
               crossorigin="anonymous"
               (load)="on_favicon_load($event)"
+              (error)="on_favicon_error()"
             />
           } @else {
             <ion-icon name="globe-outline" />
@@ -95,6 +96,24 @@
         <ion-select-option value="Yearly">Yearly</ion-select-option>
         <ion-select-option value="Weekly">Weekly</ion-select-option>
       </ion-select>
+    </div>
+
+    <!-- Earliest Cancellation Date -->
+    <div class="form-group animate-fade-in-up delay-4">
+      <label class="form-label">Earliest Cancellation (Optional)</label>
+      <div class="date-input-wrapper">
+        <ion-input
+          type="date"
+          [(ngModel)]="form_data.earliest_cancellation_date"
+          class="form-input"
+          placeholder="Select date"
+        />
+        @if (form_data.earliest_cancellation_date) {
+          <ion-button fill="clear" size="small" (click)="clear_cancellation_date()">
+            <ion-icon slot="icon-only" name="close-outline" />
+          </ion-button>
+        }
+      </div>
     </div>
 
     <!-- Color Selector -->

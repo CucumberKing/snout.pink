@@ -1,4 +1,4 @@
-import { Component, input, output, inject, ChangeDetectionStrategy } from '@angular/core';
+import { Component, input, output, inject, ChangeDetectionStrategy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -26,6 +26,8 @@ export class SubscriptionCardComponent {
   edit = output<Subscription>();
   delete = output<Subscription>();
 
+  protected logo_failed = signal(false);
+
   constructor() {
     addIcons({ createOutline, trashOutline });
   }
@@ -40,6 +42,10 @@ export class SubscriptionCardComponent {
     if (!url) return '';
     const domain = url.replace(/^(https?:\/\/)?(www\.)?/, '').split('/')[0];
     return `${environment.api_url}/logos/${domain}`;
+  }
+
+  protected on_logo_error(): void {
+    this.logo_failed.set(true);
   }
 
   protected formatted_price(): string {

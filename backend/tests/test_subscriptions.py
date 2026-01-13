@@ -73,6 +73,30 @@ async def test_create_subscription_minimal(
     data = response.json()
     assert data["name"] == "Spotify"
     assert data["url"] is None
+    assert data["earliest_cancellation_ts"] is None
+
+
+@pytest.mark.asyncio
+async def test_create_subscription_with_cancellation_date(
+    authenticated_client: AsyncClient, test_user: User, test_db
+):
+    """Test create subscription with earliest cancellation date."""
+    cancellation_ts = 1735689600.0  # 2025-01-01 00:00:00 UTC
+
+    subscription_data = {
+        "name": "Contract Service",
+        "price": 29.99,
+        "currency": "EUR",
+        "cycle": "Monthly",
+        "color": "indigo",
+        "earliest_cancellation_ts": cancellation_ts,
+    }
+
+    response = await authenticated_client.post("/subscriptions", json=subscription_data)
+    assert response.status_code == 201
+
+    data = response.json()
+    assert data["earliest_cancellation_ts"] == cancellation_ts
 
 
 @pytest.mark.asyncio
@@ -215,6 +239,31 @@ async def test_update_subscription_cycle(
     )
     assert response.status_code == 200
     assert response.json()["cycle"] == "Yearly"
+
+
+@pytest.mark.asyncio
+async def test_update_subscription_cancellation_date(
+    authenticated_client: AsyncClient, test_user: User, test_db
+):
+    """Test update subscription earliest cancellation date."""
+    subscription = Subscription(
+        user_id=test_user.user_id,
+        name="Contract Sub",
+        price=50.0,
+        currency="EUR",
+        cycle="Monthly",
+        color="amber",
+    )
+    await subscription.insert()
+
+    cancellation_ts = 1767225600.0  # 2026-01-01 00:00:00 UTC
+
+    response = await authenticated_client.patch(
+        f"/subscriptions/{subscription.subscription_id}",
+        json={"earliest_cancellation_ts": cancellation_ts},
+    )
+    assert response.status_code == 200
+    assert response.json()["earliest_cancellation_ts"] == cancellation_ts
 
 
 @pytest.mark.asyncio
@@ -402,3 +451,38 @@ async def test_export_subscriptions(
     assert "exported_ts" in data
     assert len(data["subscriptions"]) == 1
     assert data["subscriptions"][0]["name"] == "Export Test"
+
+
+@pytest.mark.asyncio
+async def test_import_export_with_cancellation_date(
+    authenticated_client: AsyncClient, test_user: User, test_db
+):
+    """Test import and export preserves earliest_cancellation_ts."""
+    cancellation_ts = 1735689600.0  # 2025-01-01 00:00:00 UTC
+
+    import_data = {
+        "subscriptions": [
+            {
+                "name": "Contract Import",
+                "price": 25.0,
+                "currency": "EUR",
+                "cycle": "Yearly",
+                "color": "cyan",
+                "earliest_cancellation_ts": cancellation_ts,
+            },
+        ],
+        "replace": False,
+    }
+
+    response = await authenticated_client.post(
+        "/subscriptions/import", json=import_data
+    )
+    assert response.status_code == 200
+
+    # Verify export includes the field
+    export_response = await authenticated_client.get("/subscriptions/export/data")
+    assert export_response.status_code == 200
+
+    exported = export_response.json()
+    assert len(exported["subscriptions"]) == 1
+    assert exported["subscriptions"][0]["earliest_cancellation_ts"] == cancellation_ts
