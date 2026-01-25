@@ -21,7 +21,7 @@ RUN npm run build -- --configuration=production
 # --- Production stage ---
 FROM nginx:alpine
 
-LABEL org.opencontainers.image.source=https://github.com/cucumberking/snout.pink
+LABEL org.opencontainers.image.source="https://github.com/CucumberKing/snout.pink"
 
 # Update system packages to fix vulnerabilities and create non-root user
 RUN apk update && \
