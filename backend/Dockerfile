@@ -3,6 +3,8 @@
 
 FROM ghcr.io/astral-sh/uv:python3.14-bookworm-slim
 
+LABEL org.opencontainers.image.source=https://github.com/CucumberKing/snout.pink
+
 WORKDIR /app
 
 # Update system packages to fix vulnerabilities and create non-root user

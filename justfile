@@ -2,6 +2,42 @@
 default:
     @just --list
 
+# ═══════════════════════════════════════════════════════════════════════════════
+# Docker: Build & Push (GHCR)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# GitHub Container Registry
+REGISTRY := "ghcr.io/cucumberking/snout.pink"
+
+# Build and push all containers
+build-docker: build-docker-backend build-docker-frontend
+    @echo "All images built and pushed successfully!"
+
+# Build and push backend image
+build-docker-backend:
+    docker buildx build \
+        --platform linux/amd64 \
+        --tag {{REGISTRY}}-backend:latest \
+        --push \
+        ./backend
+
+# Build and push frontend image
+build-docker-frontend:
+    docker buildx build \
+        --platform linux/amd64 \
+        --tag {{REGISTRY}}-frontend:latest \
+        --push \
+        ./frontend
+
+# Setup buildx builder (run once)
+docker-setup-buildx:
+    docker buildx create --name multiarch --driver docker-container --use || docker buildx use multiarch
+    docker buildx inspect --bootstrap
+
+# Login to GHCR (uses gh CLI - no manual token needed!)
+docker-login:
+    gh auth token | docker login ghcr.io -u $(gh api user --jq .login) --password-stdin
+
 # ─────────────────────────────────────────────────────────────────────────────
 # Development
 # ─────────────────────────────────────────────────────────────────────────────
@@ -22,10 +58,3 @@ start_local_mongo:
 stop_local_mongo:
     docker stop snout-mongo && docker rm snout-mongo
 
-# ─────────────────────────────────────────────────────────────────────────────
-# Production
-# ─────────────────────────────────────────────────────────────────────────────
-
-# Build Docker containers
-build:
-    sh build.sh
