@@ -26,7 +26,8 @@ jobs:
       - name: Determine tags
         id: tags
         run: |
-          IMAGE="ghcr.io/${{ github.repository_owner }}/snout.pink-${{ matrix.service }}"
+          OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          IMAGE="ghcr.io/${OWNER}/snout.pink-${{ matrix.service }}"
           if [[ "${{ github.ref_type }}" == "tag" ]]; then
             echo "tags=${IMAGE}:${{ github.ref_name }},${IMAGE}:latest" >> $GITHUB_OUTPUT
           else
