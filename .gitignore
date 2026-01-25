@@ -1,6 +1,6 @@
 .DS_Store
 examples/
-
+legal/
 # Environment files (keep .env.example)
 .env
 .env.local
