@@ -91,9 +91,11 @@ async def health_check() -> dict[str, str]:
 
 @app.get("/app-info")
 async def app_info() -> dict[str, str | None]:
-    """Public app info including legal URLs."""
+    """Public app info including legal URLs and analytics config."""
     return {
         "imprint_url": settings.imprint_url,
         "privacy_url": settings.privacy_url,
         "github_url": settings.github_url,
+        "umami_website_id": settings.umami_website_id,
+        "umami_host_url": settings.umami_host_url,
     }

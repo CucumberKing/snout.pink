@@ -77,6 +77,16 @@ class Settings(BaseSettings):
         description="URL to GitHub repository",
     )
 
+    # Umami Analytics (optional)
+    umami_website_id: str | None = Field(
+        default=None,
+        description="Umami Analytics website ID",
+    )
+    umami_host_url: str | None = Field(
+        default=None,
+        description="Umami Analytics host URL",
+    )
+
 
 @lru_cache
 def get_settings() -> Settings:

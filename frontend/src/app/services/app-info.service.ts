@@ -7,6 +7,8 @@ export interface AppInfo {
   imprint_url: string | null;
   privacy_url: string | null;
   github_url: string | null;
+  umami_website_id: string | null;
+  umami_host_url: string | null;
 }
 
 @Injectable({
