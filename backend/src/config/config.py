@@ -18,6 +18,7 @@ class Settings(BaseSettings):
     log_level: str = Field(
         default="INFO", description="Log level (DEBUG, INFO, WARNING, ERROR)"
     )
+    standby_mode: bool = Field(default=False, description="Standby mode: retry DB init instead of crashing (for failover replicas)")
 
     # MongoDB
     mongo_uri: str = Field(

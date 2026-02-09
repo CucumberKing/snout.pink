@@ -1,3 +1,4 @@
+import asyncio
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 
@@ -5,6 +6,7 @@ from beanie import init_beanie
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
+from pymongo.errors import NotPrimaryError, OperationFailure, ServerSelectionTimeoutError
 
 from api.endpoints.auth.auth_endpoints import router as auth_router
 from api.endpoints.logos.logo_endpoints import router as logos_router
@@ -38,17 +40,26 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None]:
     database = client.get_default_database()
 
     log.info("initializing_beanie", database=database.name)
-    await init_beanie(
-        database=database,
-        document_models=[
-            User,
-            PasskeyCredential,
-            Session,
-            Subscription,
-            AuthChallenge,
-            CachedLogo,
-        ],
-    )
+    while True:
+        try:
+            await init_beanie(
+                database=database,
+                document_models=[
+                    User,
+                    PasskeyCredential,
+                    Session,
+                    Subscription,
+                    AuthChallenge,
+                    CachedLogo,
+                ],
+            )
+            break
+        except (NotPrimaryError, OperationFailure, ServerSelectionTimeoutError) as e:
+            if settings.standby_mode and ("not primary" in str(e).lower() or isinstance(e, NotPrimaryError)):
+                log.info("standby_waiting_for_primary", retry_in=5)
+                await asyncio.sleep(5)
+            else:
+                raise
 
     yield
 
