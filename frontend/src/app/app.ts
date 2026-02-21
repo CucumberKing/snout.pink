@@ -3,6 +3,7 @@ import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
 import { SwUpdate, VersionReadyEvent } from '@angular/service-worker';
 import { filter } from 'rxjs';
 import { AnalyticsService } from './services/analytics.service';
+import { WebMcpService } from './services/webmcp.service';
 
 @Component({
   selector: 'app-root',
@@ -23,6 +24,7 @@ export class App {
   protected title = 'PinkGrid';
   private readonly sw_update = inject(SwUpdate, { optional: true });
   private readonly analytics = inject(AnalyticsService);
+  private readonly webmcp = inject(WebMcpService);
 
   constructor() {
     // Auto-reload when new version is available
@@ -35,5 +37,6 @@ export class App {
     }
 
     this.analytics.init();
+    this.webmcp.init();
   }
 }
