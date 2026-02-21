@@ -57,7 +57,7 @@ services:
       # Session security
       SESSION_COOKIE_SECURE: "true"
       SESSION_COOKIE_NAME: "session"
-      SESSION_TTL_SECONDS: "604800"
+      SESSION_TTL_SECONDS: "31536000"
       # Logo.dev API
       LOGO_DEV_TOKEN: "${LOGO_DEV_TOKEN:-}"
       # Legal / About URLs (optional)

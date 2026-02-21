@@ -50,7 +50,7 @@ class Settings(BaseSettings):
         description="Name of the session cookie",
     )
     session_ttl_seconds: int = Field(
-        default=604800,  # 7 days
+        default=31536000,  # 365 days
         description="Session lifetime in seconds",
     )
     session_cookie_secure: bool = Field(

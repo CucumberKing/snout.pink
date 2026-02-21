@@ -1,4 +1,6 @@
-from fastapi import Cookie, Depends, HTTPException, Request, status
+import time
+
+from fastapi import Cookie, Depends, HTTPException, Request, Response, status
 
 from config.config import settings
 from config.logging import get_logger
@@ -18,9 +20,13 @@ async def get_session_token(
 
 async def get_current_session(
     session_token: str | None = Depends(get_session_token),
+    response: Response = None,
 ) -> Session:
     """
     Get the current session from the session token.
+
+    Automatically refreshes the session (sliding expiry) when less than
+    half the TTL remains. This keeps active users logged in indefinitely.
 
     Raises:
         HTTPException: If no valid session is found
@@ -50,6 +56,23 @@ async def get_current_session(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Session expired",
         )
+
+    # Sliding session: refresh when less than half the TTL remains
+    remaining = session.expires_ts - time.time()
+    if remaining < settings.session_ttl_seconds / 2:
+        session.refresh()
+        await session.save()
+        # Re-set cookie with fresh max_age so it doesn't expire before the session
+        if response is not None:
+            response.set_cookie(
+                key=settings.session_cookie_name,
+                value=session.session_token,
+                max_age=settings.session_ttl_seconds,
+                httponly=True,
+                secure=settings.session_cookie_secure,
+                samesite="lax",
+            )
+        log.debug("session_refreshed", session_id=str(session.id))
 
     return session
 

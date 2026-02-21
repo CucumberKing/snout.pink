@@ -1,5 +1,5 @@
 import { Injectable, signal, computed, inject, Injector, runInInjectionContext } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import {
   startRegistration,
@@ -37,30 +37,66 @@ export class AuthService {
 
   readonly is_authenticated = computed(() => this._user() !== null);
 
+  private readonly AUTH_STORAGE_KEY = 'snout_auth_user';
+
   /**
-   * Check if user is authenticated on app startup
+   * Check if user is authenticated on app startup.
+   * Retries on network errors to handle SW reloads during backend deployments.
+   * Falls back to cached user data when server is completely unreachable.
    */
   async init(): Promise<void> {
     if (this._initialized()) return;
 
     try {
-      const me = await firstValueFrom(
-        this.http.get<MeResponse>(`${this.api_url}/me`, { withCredentials: true })
-      );
-      this._user.set({
-        user_id: me.user_id,
-        display_name: me.display_name,
-        default_currency: 'EUR',
-        created_ts: me.created_ts,
-        updated_ts: me.created_ts,
-      });
-      // Notify subscription service about login
-      await this.notify_subscription_service_login();
-    } catch {
-      // Not authenticated - that's fine
-      this._user.set(null);
+      await this.check_auth_with_retry();
     } finally {
       this._initialized.set(true);
+    }
+  }
+
+  private async check_auth_with_retry(): Promise<void> {
+    const max_retries = 3;
+    const retry_delay_ms = 2000;
+
+    for (let attempt = 0; attempt <= max_retries; attempt++) {
+      try {
+        const me = await firstValueFrom(
+          this.http.get<MeResponse>(`${this.api_url}/me`, { withCredentials: true })
+        );
+        const user: User = {
+          user_id: me.user_id,
+          display_name: me.display_name,
+          default_currency: 'EUR',
+          created_ts: me.created_ts,
+          updated_ts: me.created_ts,
+        };
+        this._user.set(user);
+        this.save_user_to_storage(user);
+        await this.notify_subscription_service_login();
+        return;
+      } catch (err: unknown) {
+        // 401 = server explicitly says not authenticated → no retry
+        if (err instanceof HttpErrorResponse && err.status === 401) {
+          this._user.set(null);
+          this.clear_user_from_storage();
+          return;
+        }
+
+        // Network error or server error → retry
+        if (attempt < max_retries) {
+          await new Promise(resolve => setTimeout(resolve, retry_delay_ms));
+          continue;
+        }
+
+        // All retries exhausted → fall back to cached user (offline resilience)
+        const cached_user = this.load_user_from_storage();
+        if (cached_user) {
+          this._user.set(cached_user);
+          await this.notify_subscription_service_login();
+        } else {
+          this._user.set(null);
+        }
+      }
     }
   }
 
@@ -179,6 +215,7 @@ export class AuthService {
       // Ignore errors on logout
     } finally {
       this._user.set(null);
+      this.clear_user_from_storage();
       this.notify_subscription_service_logout();
     }
   }
@@ -190,13 +227,15 @@ export class AuthService {
     const me = await firstValueFrom(
       this.http.get<MeResponse>(`${this.api_url}/me`, { withCredentials: true })
     );
-    this._user.set({
+    const user: User = {
       user_id: me.user_id,
       display_name: me.display_name,
       default_currency: 'EUR',
       created_ts: me.created_ts,
       updated_ts: me.created_ts,
-    });
+    };
+    this._user.set(user);
+    this.save_user_to_storage(user);
   }
 
   /**
@@ -204,6 +243,31 @@ export class AuthService {
    */
   clear_error(): void {
     this._error.set(null);
+  }
+
+  private save_user_to_storage(user: User): void {
+    try {
+      localStorage.setItem(this.AUTH_STORAGE_KEY, JSON.stringify(user));
+    } catch {
+      // localStorage might be unavailable (private browsing, storage full)
+    }
+  }
+
+  private load_user_from_storage(): User | null {
+    try {
+      const stored = localStorage.getItem(this.AUTH_STORAGE_KEY);
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      return null;
+    }
+  }
+
+  private clear_user_from_storage(): void {
+    try {
+      localStorage.removeItem(this.AUTH_STORAGE_KEY);
+    } catch {
+      // Ignore
+    }
   }
 
   /**
