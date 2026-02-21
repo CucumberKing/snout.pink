@@ -142,43 +142,52 @@
           An open-source hobby project to visualize your subscription costs. Works fully offline - no account needed. Optional passkey login for cross-device sync. No personal data collected, but as a hobby project, don't store anything sensitive here.
         </p>
 
-        @if (app_info_service.has_any_link()) {
-          <div class="about-links">
-            @if (app_info_service.app_info()?.imprint_url) {
-              <a
-                [href]="app_info_service.app_info()!.imprint_url"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="about-link"
-              >
-                <ion-icon name="open-outline" />
-                Impressum
-              </a>
-            }
-            @if (app_info_service.app_info()?.privacy_url) {
-              <a
-                [href]="app_info_service.app_info()!.privacy_url"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="about-link"
-              >
-                <ion-icon name="open-outline" />
-                Datenschutz
-              </a>
-            }
-            @if (app_info_service.app_info()?.github_url) {
-              <a
-                [href]="app_info_service.app_info()!.github_url"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="about-link"
-              >
-                <ion-icon name="logo-github" />
-                GitHub
-              </a>
-            }
-          </div>
-        }
+        <div class="about-links">
+          @if (app_info_service.app_info()?.imprint_url) {
+            <a
+              [href]="app_info_service.app_info()!.imprint_url"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="about-link"
+            >
+              <ion-icon name="open-outline" />
+              Impressum
+            </a>
+          }
+          @if (app_info_service.app_info()?.privacy_url) {
+            <a
+              [href]="app_info_service.app_info()!.privacy_url"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="about-link"
+            >
+              <ion-icon name="open-outline" />
+              Datenschutz
+            </a>
+          }
+          @if (app_info_service.app_info()?.github_url) {
+            <a
+              [href]="app_info_service.app_info()!.github_url"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="about-link"
+            >
+              <ion-icon name="logo-github" />
+              GitHub
+            </a>
+          }
+          <a
+            href="https://webmachinelearning.github.io/webmcp/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="about-link webmcp-link"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/>
+            </svg>
+            WebMCP
+          </a>
+        </div>
       </div>
     </div>
   </div>

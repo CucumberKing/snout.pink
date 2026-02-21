@@ -1,11 +1,11 @@
 /**
  * WebMCP Service - Exposes structured tools for AI agents via navigator.modelContext
  *
- * WebMCP is a proposed web standard (Chrome 146+) that lets websites declare
- * tools that AI agents can discover and call, replacing screen-scraping with
- * explicit, structured API calls.
+ * WebMCP is a W3C Draft Community Group Report (Chrome 146+) that lets websites
+ * declare tools that AI agents can discover and call, replacing screen-scraping
+ * with explicit, structured API calls.
  *
- * Spec: https://github.com/webmachinelearning/webmcp
+ * Spec: https://webmachinelearning.github.io/webmcp/
  */
 import { Injectable, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
@@ -13,34 +13,37 @@ import { SubscriptionService } from './subscription.service';
 import { CurrencyService } from './currency.service';
 import { Subscription, SubscriptionColor } from '../models/subscription.model';
 
-// ── WebMCP browser API type declarations ──────────────────────
+// ── WebMCP browser API type declarations (W3C Draft, Feb 2026) ──
 
-interface ModelContextToolResult {
-  content: Array<{ type: 'text'; text: string }>;
-  isError?: boolean;
+interface ModelContextClient {
+  requestUserInteraction(callback: () => Promise<unknown>): Promise<unknown>;
 }
 
-interface ModelContextToolDefinition {
+interface ModelContextTool {
   name: string;
   description: string;
-  inputSchema: {
+  inputSchema?: {
     type: 'object';
     properties: Record<string, unknown>;
     required?: string[];
   };
   annotations?: {
-    readOnlyHint?: string;
-    title?: string;
+    readOnlyHint?: boolean;
   };
-  execute: (params: Record<string, unknown>) => ModelContextToolResult | Promise<ModelContextToolResult>;
+  execute: (input: Record<string, unknown>, client: ModelContextClient) => Promise<unknown>;
+}
+
+interface ModelContextOptions {
+  tools?: ModelContextTool[];
 }
 
 declare global {
   interface Navigator {
     modelContext?: {
-      registerTool(definition: ModelContextToolDefinition): void;
-      unregisterTool(name: string): void;
+      provideContext(options?: ModelContextOptions): void;
       clearContext(): void;
+      registerTool(tool: ModelContextTool): void;
+      unregisterTool(name: string): void;
     };
   }
 }
@@ -93,8 +96,8 @@ export class WebMcpService {
         type: 'object',
         properties: {}
       },
-      annotations: { readOnlyHint: 'true' },
-      execute: () => {
+      annotations: { readOnlyHint: true },
+      execute: async () => {
         try {
           const subscriptions = this.subs.subscriptions();
           if (subscriptions.length === 0) {
@@ -116,8 +119,8 @@ export class WebMcpService {
         type: 'object',
         properties: {}
       },
-      annotations: { readOnlyHint: 'true' },
-      execute: () => {
+      annotations: { readOnlyHint: true },
+      execute: async () => {
         try {
           const subscriptions = this.subs.subscriptions();
           if (subscriptions.length === 0) {
@@ -193,14 +196,14 @@ export class WebMcpService {
         },
         required: ['name', 'price', 'currency', 'cycle']
       },
-      execute: async (params) => {
+      execute: async (input) => {
         try {
-          const name = params['name'] as string;
-          const price = params['price'] as number;
-          const currency = (params['currency'] as string).toUpperCase();
-          const cycle = params['cycle'] as string;
-          const url = (params['url'] as string | undefined) ?? null;
-          const color = (params['color'] as SubscriptionColor | undefined) ?? VALID_COLORS[Math.floor(Math.random() * VALID_COLORS.length)];
+          const name = input['name'] as string;
+          const price = input['price'] as number;
+          const currency = (input['currency'] as string).toUpperCase();
+          const cycle = input['cycle'] as string;
+          const url = (input['url'] as string | undefined) ?? null;
+          const color = (input['color'] as SubscriptionColor | undefined) ?? VALID_COLORS[Math.floor(Math.random() * VALID_COLORS.length)];
 
           if (!name || name.trim().length === 0) {
             return this.error_result('Name is required.');
@@ -213,8 +216,8 @@ export class WebMcpService {
           }
 
           let earliest_cancellation_ts: number | null = null;
-          if (params['earliest_cancellation_date']) {
-            const date = new Date(params['earliest_cancellation_date'] as string);
+          if (input['earliest_cancellation_date']) {
+            const date = new Date(input['earliest_cancellation_date'] as string);
             if (isNaN(date.getTime())) {
               return this.error_result('Invalid date format. Use YYYY-MM-DD.');
             }
@@ -286,9 +289,9 @@ export class WebMcpService {
         },
         required: ['subscription_id']
       },
-      execute: async (params) => {
+      execute: async (input) => {
         try {
-          const subscription_id = params['subscription_id'] as string;
+          const subscription_id = input['subscription_id'] as string;
 
           const existing = this.subs.get(subscription_id);
           if (!existing) {
@@ -297,27 +300,27 @@ export class WebMcpService {
 
           const updates: Record<string, unknown> = {};
 
-          if (params['name'] !== undefined) updates['name'] = (params['name'] as string).trim();
-          if (params['price'] !== undefined) {
-            const price = params['price'] as number;
+          if (input['name'] !== undefined) updates['name'] = (input['name'] as string).trim();
+          if (input['price'] !== undefined) {
+            const price = input['price'] as number;
             if (price <= 0) return this.error_result('Price must be greater than 0.');
             updates['price'] = price;
           }
-          if (params['currency'] !== undefined) updates['currency'] = (params['currency'] as string).toUpperCase();
-          if (params['cycle'] !== undefined) {
-            const cycle = params['cycle'] as string;
+          if (input['currency'] !== undefined) updates['currency'] = (input['currency'] as string).toUpperCase();
+          if (input['cycle'] !== undefined) {
+            const cycle = input['cycle'] as string;
             if (!VALID_CYCLES.includes(cycle as typeof VALID_CYCLES[number])) {
               return this.error_result(`Invalid cycle. Must be one of: ${VALID_CYCLES.join(', ')}`);
             }
             updates['cycle'] = cycle;
           }
-          if (params['url'] !== undefined) {
-            const url = params['url'] as string;
+          if (input['url'] !== undefined) {
+            const url = input['url'] as string;
             updates['url'] = url === '' ? null : url;
           }
-          if (params['color'] !== undefined) updates['color'] = params['color'];
-          if (params['earliest_cancellation_date'] !== undefined) {
-            const date_str = params['earliest_cancellation_date'] as string;
+          if (input['color'] !== undefined) updates['color'] = input['color'];
+          if (input['earliest_cancellation_date'] !== undefined) {
+            const date_str = input['earliest_cancellation_date'] as string;
             if (date_str === '') {
               updates['earliest_cancellation_ts'] = null;
             } else {
@@ -360,9 +363,9 @@ export class WebMcpService {
         },
         required: ['subscription_id']
       },
-      execute: async (params) => {
+      execute: async (input) => {
         try {
-          const subscription_id = params['subscription_id'] as string;
+          const subscription_id = input['subscription_id'] as string;
 
           const existing = this.subs.get(subscription_id);
           if (!existing) {
@@ -391,8 +394,8 @@ export class WebMcpService {
         type: 'object',
         properties: {}
       },
-      annotations: { readOnlyHint: 'true' },
-      execute: () => {
+      annotations: { readOnlyHint: true },
+      execute: async () => {
         try {
           const subscriptions = this.subs.subscriptions();
           if (subscriptions.length === 0) {
@@ -435,12 +438,12 @@ export class WebMcpService {
     return lines.join('\n');
   }
 
-  private success_result(text: string): ModelContextToolResult {
-    return { content: [{ type: 'text', text }] };
+  private success_result(text: string) {
+    return { content: [{ type: 'text' as const, text }] };
   }
 
-  private error_result(message: string): ModelContextToolResult {
-    return { content: [{ type: 'text', text: `Error: ${message}` }], isError: true };
+  private error_result(message: string) {
+    return { content: [{ type: 'text' as const, text: `Error: ${message}` }], isError: true };
   }
 
   private err_msg(err: unknown): string {

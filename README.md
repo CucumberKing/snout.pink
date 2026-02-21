@@ -19,6 +19,7 @@ A subscription tracking application with passkey authentication. Track your recu
 - **Treemap Visualization** - See your spending distribution with D3.js
 - **Multi-Currency Support** - Track subscriptions in different currencies
 - **Mobile-First Design** - Built with Ionic for a responsive experience
+- **[WebMCP](https://webmachinelearning.github.io/webmcp/) Support** - AI agents can manage your subscriptions via `navigator.modelContext` (Chrome 146+)
 
 ## Tech Stack
 
