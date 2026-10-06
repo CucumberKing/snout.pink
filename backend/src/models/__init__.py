@@ -1,5 +1,6 @@
 from models.auth_challenge import AuthChallenge
 from models.cached_logo import CachedLogo
+from models.mcp_token import McpToken
 from models.passkey_credential import PasskeyCredential
 from models.session import Session
 from models.subscription import Subscription
@@ -12,4 +13,5 @@ __all__ = [
     "Subscription",
     "AuthChallenge",
     "CachedLogo",
+    "McpToken",
 ]

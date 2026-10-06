@@ -33,10 +33,10 @@ import { CurrencyService } from '../../../../services/currency.service';
 import { SubscriptionService } from '../../../../services/subscription.service';
 import { AuthService } from '../../../../services/auth';
 import { AppInfoService } from '../../../../services/app-info.service';
+import { McpAccessComponent } from '../mcp-access/mcp-access';
 
 @Component({
   selector: 'app-settings-modal',
-  standalone: true,
   imports: [
     CommonModule,
     FormsModule,
@@ -48,6 +48,7 @@ import { AppInfoService } from '../../../../services/app-info.service';
     IonIcon,
     IonSelect,
     IonSelectOption,
+    McpAccessComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './settings-modal.html',

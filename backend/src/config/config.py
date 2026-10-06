@@ -43,6 +43,10 @@ class Settings(BaseSettings):
         default="http://localhost:4200",
         description="Allowed origin for WebAuthn",
     )
+    public_base_url: str | None = Field(
+        default=None,
+        description="Public origin used in the copied MCP URL. Falls back to the API origin in dev and rp_origin otherwise.",
+    )
 
     # Session
     session_cookie_name: str = Field(
@@ -77,6 +81,14 @@ class Settings(BaseSettings):
         default=None,
         description="URL to GitHub repository",
     )
+
+    def resolved_public_base_url(self) -> str:
+        """Origin that clients use to reach this server."""
+        if self.public_base_url:
+            return self.public_base_url.rstrip("/")
+        if self.dev:
+            return "http://localhost:8000"
+        return self.rp_origin.rstrip("/")
 
     # Umami Analytics (optional)
     umami_website_id: str | None = Field(

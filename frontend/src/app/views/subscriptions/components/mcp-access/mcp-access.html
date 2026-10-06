@@ -1,0 +1,110 @@
+<section class="settings-section">
+  <div class="section-header">
+    <span class="section-title">MCP</span>
+  </div>
+  <div class="settings-card">
+    @if (!auth_service.is_authenticated()) {
+      <p class="helper-text">Sign in to create an MCP access token.</p>
+    } @else {
+      <p class="helper-text intro">
+        Connect Claude, Cursor, or another MCP client. The secret is shown once.
+      </p>
+
+      @if (tokens().length === 0) {
+        <p class="helper-text">No MCP access tokens yet.</p>
+      } @else {
+        <ul class="token-list">
+          @for (token of tokens(); track token.token_id) {
+            <li class="token-row">
+              <div class="token-copy">
+                <span class="token-name">{{ token.name }}</span>
+                <span class="token-meta">
+                  {{ token.token_prefix }}… · {{ scope_label(token.scopes) }} ·
+                  {{ format_last_used(token.last_used_at_ts) }}
+                </span>
+              </div>
+              <ion-button
+                fill="clear"
+                color="danger"
+                size="small"
+                [attr.aria-label]="'Revoke ' + token.name"
+                (click)="revoke(token.token_id)"
+              >
+                <ion-icon slot="icon-only" name="trash-outline" />
+              </ion-button>
+            </li>
+          }
+        </ul>
+      }
+
+      <label class="field-label" for="mcp-token-name">Name</label>
+      <ion-input
+        id="mcp-token-name"
+        class="field-input"
+        placeholder="Laptop"
+        [value]="name()"
+        (ionInput)="on_name_input($event)"
+      />
+
+      <label class="field-label" for="mcp-token-access">Access</label>
+      <ion-select
+        id="mcp-token-access"
+        class="field-input"
+        interface="action-sheet"
+        [value]="access()"
+        (ionChange)="on_access_change($event)"
+      >
+        <ion-select-option value="read_write">Read and write</ion-select-option>
+        <ion-select-option value="read">Read only</ion-select-option>
+      </ion-select>
+
+      <ion-button
+        expand="block"
+        class="create-btn"
+        [disabled]="loading() || name().trim().length === 0"
+        (click)="create_token()"
+      >
+        <ion-icon slot="start" name="key-outline" />
+        Create access
+      </ion-button>
+
+      @if (created(); as fresh) {
+        <div class="secret-panel" role="status">
+          <p class="secret-warning">
+            Copy this secret now. It will not be shown again.
+          </p>
+          <p class="secret-label">Endpoint</p>
+          <p class="secret-value">{{ fresh.mcp_url }}</p>
+          <ion-button
+            fill="outline"
+            size="small"
+            (click)="copy_text(fresh.mcp_url, 'url')"
+          >
+            <ion-icon slot="start" name="copy-outline" />
+            {{ copied() === 'url' ? 'Copied' : 'Copy URL' }}
+          </ion-button>
+
+          <p class="secret-label">Client config</p>
+          <pre class="config-block">{{ client_config_text() }}</pre>
+          <div class="secret-actions">
+            <ion-button
+              fill="outline"
+              size="small"
+              (click)="copy_text(client_config_text(), 'config')"
+            >
+              <ion-icon slot="start" name="copy-outline" />
+              {{ copied() === 'config' ? 'Copied' : 'Copy config' }}
+            </ion-button>
+            <ion-button fill="clear" size="small" (click)="dismiss_secret()">
+              Hide secret
+            </ion-button>
+          </div>
+        </div>
+      }
+    }
+
+    @if (error_message()) {
+      <p class="form-error" role="alert">{{ error_message() }}</p>
+    }
+  </div>
+</section>

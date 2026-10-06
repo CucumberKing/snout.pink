@@ -1,15 +1,16 @@
 from fastapi import APIRouter, Depends, Response
 
-from api.dependencies import get_current_session, get_current_user
-from api.endpoints.users.users_models import (
+from config.config import settings
+from config.logging import get_logger
+from interfaces.api.dependencies import get_current_session, get_current_user
+from interfaces.api.endpoints.users.users_models import (
     UserDeleteResponse,
     UserResponse,
     UserUpdateRequest,
     UserUpdateResponse,
 )
-from config.config import settings
-from config.logging import get_logger
 from models import PasskeyCredential, Session, User
+from services.mcp_tokens.mcp_token_service import delete_mcp_tokens_for_user
 
 log = get_logger(__name__)
 router = APIRouter()
@@ -79,6 +80,8 @@ async def delete_current_user(
     await Session.find(
         Session.user.id == user.id,  # type: ignore[attr-defined]
     ).delete()
+
+    await delete_mcp_tokens_for_user(user_id)
 
     # Delete the user
     await user.delete()

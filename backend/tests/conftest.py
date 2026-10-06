@@ -24,6 +24,7 @@ from motor.motor_asyncio import AsyncIOMotorClient  # noqa: E402
 from models import (  # noqa: E402
     AuthChallenge,
     CachedLogo,
+    McpToken,
     PasskeyCredential,
     Session,
     Subscription,
@@ -65,6 +66,7 @@ async def test_db(mongo_client: AsyncIOMotorClient) -> AsyncGenerator[Any]:
             Subscription,
             AuthChallenge,
             CachedLogo,
+            McpToken,
         ],
     )
 
@@ -77,6 +79,7 @@ async def test_db(mongo_client: AsyncIOMotorClient) -> AsyncGenerator[Any]:
     await database.subscriptions.drop()
     await database.auth_challenges.drop()
     await database.cached_logos.drop()
+    await database.mcp_tokens.drop()
 
 
 @pytest_asyncio.fixture(scope="function")

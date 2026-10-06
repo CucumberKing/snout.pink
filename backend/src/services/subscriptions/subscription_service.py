@@ -1,11 +1,10 @@
+"""Subscription reads and writes. HTTP and MCP both call this module."""
+
 import time
 
-from fastapi import APIRouter, Depends, HTTPException, status
-
-from api.dependencies import get_current_user
-from api.endpoints.subscriptions.subscription_models import (
+from config.logging import get_logger
+from interfaces.api.endpoints.subscriptions.subscription_models import (
     SubscriptionCreateRequest,
-    SubscriptionDeleteResponse,
     SubscriptionExportResponse,
     SubscriptionImportRequest,
     SubscriptionImportResponse,
@@ -13,15 +12,21 @@ from api.endpoints.subscriptions.subscription_models import (
     SubscriptionResponse,
     SubscriptionUpdateRequest,
 )
-from config.logging import get_logger
-from models import Subscription, User
+from models import Subscription
 
 log = get_logger(__name__)
-router = APIRouter()
+
+
+class SubscriptionNotFoundError(Exception):
+    """The subscription does not exist for this user."""
+
+    def __init__(self, subscription_id: str) -> None:
+        self.subscription_id = subscription_id
+        super().__init__(subscription_id)
 
 
 def subscription_to_response(sub: Subscription) -> SubscriptionResponse:
-    """Convert a Subscription document to a response model."""
+    """Project a stored subscription onto the public response."""
     return SubscriptionResponse(
         subscription_id=sub.subscription_id,
         user_id=sub.user_id,
@@ -37,19 +42,13 @@ def subscription_to_response(sub: Subscription) -> SubscriptionResponse:
     )
 
 
-@router.get("", response_model=SubscriptionListResponse)
-async def list_subscriptions(
-    user: User = Depends(get_current_user),
-) -> SubscriptionListResponse:
-    """
-    List all subscriptions for the current user.
-    """
+async def list_subscriptions(user_id: str) -> SubscriptionListResponse:
+    """List one user's subscriptions and the monthly and yearly totals."""
     subscriptions = await Subscription.find(
-        Subscription.user_id == user.user_id,
+        Subscription.user_id == user_id,
     ).to_list()
 
     response_items = [subscription_to_response(sub) for sub in subscriptions]
-
     monthly_total = sum(sub.to_monthly() for sub in subscriptions)
     yearly_total = sum(sub.to_yearly() for sub in subscriptions)
 
@@ -61,18 +60,19 @@ async def list_subscriptions(
     )
 
 
-@router.post(
-    "", response_model=SubscriptionResponse, status_code=status.HTTP_201_CREATED
-)
+async def get_subscription(user_id: str, subscription_id: str) -> SubscriptionResponse:
+    """Return one subscription owned by the user."""
+    subscription = await _find_owned(user_id, subscription_id)
+    return subscription_to_response(subscription)
+
+
 async def create_subscription(
+    user_id: str,
     request: SubscriptionCreateRequest,
-    user: User = Depends(get_current_user),
 ) -> SubscriptionResponse:
-    """
-    Create a new subscription.
-    """
+    """Insert a subscription for the user."""
     subscription = Subscription(
-        user_id=user.user_id,
+        user_id=user_id,
         name=request.name,
         price=request.price,
         currency=request.currency,
@@ -81,61 +81,24 @@ async def create_subscription(
         color=request.color,
         earliest_cancellation_ts=request.earliest_cancellation_ts,
     )
-
     await subscription.insert()
 
     log.info(
         "subscription_created",
         subscription_id=subscription.subscription_id,
-        user_id=user.user_id,
+        user_id=user_id,
     )
-
     return subscription_to_response(subscription)
 
 
-@router.get("/{subscription_id}", response_model=SubscriptionResponse)
-async def get_subscription(
-    subscription_id: str,
-    user: User = Depends(get_current_user),
-) -> SubscriptionResponse:
-    """
-    Get a specific subscription by ID.
-    """
-    subscription = await Subscription.find_one(
-        Subscription.subscription_id == subscription_id,
-        Subscription.user_id == user.user_id,
-    )
-
-    if not subscription:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Subscription not found",
-        )
-
-    return subscription_to_response(subscription)
-
-
-@router.patch("/{subscription_id}", response_model=SubscriptionResponse)
 async def update_subscription(
+    user_id: str,
     subscription_id: str,
     request: SubscriptionUpdateRequest,
-    user: User = Depends(get_current_user),
 ) -> SubscriptionResponse:
-    """
-    Update a subscription.
-    """
-    subscription = await Subscription.find_one(
-        Subscription.subscription_id == subscription_id,
-        Subscription.user_id == user.user_id,
-    )
+    """Apply the fields that were sent. Omitted fields stay as they are."""
+    subscription = await _find_owned(user_id, subscription_id)
 
-    if not subscription:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Subscription not found",
-        )
-
-    # Update fields if provided
     if request.name is not None:
         subscription.name = request.name
     if request.price is not None:
@@ -157,61 +120,35 @@ async def update_subscription(
     log.info(
         "subscription_updated",
         subscription_id=subscription_id,
-        user_id=user.user_id,
+        user_id=user_id,
     )
-
     return subscription_to_response(subscription)
 
 
-@router.delete("/{subscription_id}", response_model=SubscriptionDeleteResponse)
-async def delete_subscription(
-    subscription_id: str,
-    user: User = Depends(get_current_user),
-) -> SubscriptionDeleteResponse:
-    """
-    Delete a subscription.
-    """
-    subscription = await Subscription.find_one(
-        Subscription.subscription_id == subscription_id,
-        Subscription.user_id == user.user_id,
-    )
-
-    if not subscription:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Subscription not found",
-        )
-
+async def delete_subscription(user_id: str, subscription_id: str) -> None:
+    """Delete one subscription owned by the user."""
+    subscription = await _find_owned(user_id, subscription_id)
     await subscription.delete()
-
     log.info(
         "subscription_deleted",
         subscription_id=subscription_id,
-        user_id=user.user_id,
+        user_id=user_id,
     )
 
-    return SubscriptionDeleteResponse(message="Subscription deleted successfully")
 
-
-@router.post("/import", response_model=SubscriptionImportResponse)
 async def import_subscriptions(
+    user_id: str,
     request: SubscriptionImportRequest,
-    user: User = Depends(get_current_user),
 ) -> SubscriptionImportResponse:
-    """
-    Import subscriptions from a list.
-    If replace=True, deletes all existing subscriptions first.
-    """
+    """Insert subscriptions. replace=True deletes the user's current rows first."""
     if request.replace:
-        await Subscription.find(
-            Subscription.user_id == user.user_id,
-        ).delete()
-        log.info("subscriptions_cleared_for_import", user_id=user.user_id)
+        await Subscription.find(Subscription.user_id == user_id).delete()
+        log.info("subscriptions_cleared_for_import", user_id=user_id)
 
     imported_count = 0
     for sub_data in request.subscriptions:
         subscription = Subscription(
-            user_id=user.user_id,
+            user_id=user_id,
             name=sub_data.name,
             price=sub_data.price,
             currency=sub_data.currency,
@@ -227,30 +164,29 @@ async def import_subscriptions(
         "subscriptions_imported",
         count=imported_count,
         replace=request.replace,
-        user_id=user.user_id,
+        user_id=user_id,
     )
-
     return SubscriptionImportResponse(
         imported=imported_count,
         message=f"Successfully imported {imported_count} subscription(s)",
     )
 
 
-@router.get("/export/data", response_model=SubscriptionExportResponse)
-async def export_subscriptions(
-    user: User = Depends(get_current_user),
-) -> SubscriptionExportResponse:
-    """
-    Export all subscriptions as JSON.
-    """
-    subscriptions = await Subscription.find(
-        Subscription.user_id == user.user_id,
-    ).to_list()
-
-    response_items = [subscription_to_response(sub) for sub in subscriptions]
-
+async def export_subscriptions(user_id: str) -> SubscriptionExportResponse:
+    """Export every subscription the user owns."""
+    subscriptions = await Subscription.find(Subscription.user_id == user_id).to_list()
     return SubscriptionExportResponse(
         version=1,
         exported_ts=time.time(),
-        subscriptions=response_items,
+        subscriptions=[subscription_to_response(sub) for sub in subscriptions],
     )
+
+
+async def _find_owned(user_id: str, subscription_id: str) -> Subscription:
+    subscription = await Subscription.find_one(
+        Subscription.subscription_id == subscription_id,
+        Subscription.user_id == user_id,
+    )
+    if subscription is None:
+        raise SubscriptionNotFoundError(subscription_id)
+    return subscription

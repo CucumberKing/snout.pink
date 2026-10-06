@@ -27,6 +27,7 @@ dependencies = [
     "httpx[http2]>=0.27.0",
     "structlog>=25.5.0",
     "webauthn>=2.7.0",
+    "fastmcp>=4.0.11",
 ]
 
 [dependency-groups]

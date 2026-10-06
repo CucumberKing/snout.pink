@@ -54,6 +54,16 @@
         reverse_proxy backend:8000
     }
 
+    # Remote MCP. The /mcp prefix stays; streamable HTTP must not be buffered.
+    handle /mcp* {
+        reverse_proxy backend:8000 {
+            flush_interval -1
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+        }
+    }
+
     # Frontend → nginx container
     handle {
         reverse_proxy frontend:80

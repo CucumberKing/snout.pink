@@ -1,7 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, Response, status
 
-from api.dependencies import get_current_session, get_current_user
-from api.endpoints.auth.auth_models import (
+from config.config import settings
+from config.logging import get_logger
+from interfaces.api.dependencies import get_current_session, get_current_user
+from interfaces.api.endpoints.auth.auth_models import (
     LoginBeginResponse,
     LoginCompleteRequest,
     LoginCompleteResponse,
@@ -11,8 +13,6 @@ from api.endpoints.auth.auth_models import (
     RegisterCompleteRequest,
     RegisterCompleteResponse,
 )
-from config.config import settings
-from config.logging import get_logger
 from models import PasskeyCredential, Session, User
 from services.auth.passkey_service import passkey_service
 from services.auth.session_service import (

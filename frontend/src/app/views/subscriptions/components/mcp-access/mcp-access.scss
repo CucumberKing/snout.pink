@@ -1,0 +1,142 @@
+.settings-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.section-title {
+  font-size: var(--font-size-footnote);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--ion-color-medium);
+}
+
+.settings-card {
+  background: var(--ion-card-background);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  box-shadow: var(--shadow-sm);
+}
+
+.helper-text {
+  font-size: var(--font-size-footnote);
+  color: var(--ion-color-medium);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.intro {
+  margin-bottom: 12px;
+}
+
+.token-list {
+  list-style: none;
+  margin: 0 0 16px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.token-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--ion-color-light);
+}
+
+.token-copy {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.token-name {
+  font-size: var(--font-size-body);
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.token-meta {
+  font-size: var(--font-size-footnote);
+  color: var(--ion-color-medium);
+  overflow-wrap: anywhere;
+}
+
+.field-label {
+  display: block;
+  margin: 14px 0 6px;
+  font-size: var(--font-size-footnote);
+  font-weight: 600;
+  color: var(--ion-color-medium);
+}
+
+.field-input {
+  --background: var(--ion-color-light);
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --border-radius: var(--radius-md);
+  width: 100%;
+}
+
+.create-btn {
+  margin-top: 16px;
+  --border-radius: var(--radius-md);
+  font-weight: 600;
+}
+
+.secret-panel {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--ion-color-light);
+}
+
+.secret-warning {
+  margin: 0 0 12px;
+  font-size: var(--font-size-footnote);
+  font-weight: 600;
+  color: var(--ion-color-warning-shade, var(--ion-color-warning));
+}
+
+.secret-label {
+  margin: 12px 0 4px;
+  font-size: var(--font-size-footnote);
+  font-weight: 600;
+  color: var(--ion-color-medium);
+}
+
+.secret-value {
+  margin: 0 0 8px;
+  overflow-wrap: anywhere;
+  font-size: var(--font-size-subhead);
+}
+
+.secret-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.config-block {
+  margin: 0 0 8px;
+  padding: 12px;
+  max-height: 220px;
+  overflow: auto;
+  border-radius: var(--radius-md);
+  background: var(--ion-color-light);
+  font-size: 12px;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.form-error {
+  margin: 12px 0 0;
+  color: var(--ion-color-danger);
+  font-size: var(--font-size-footnote);
+}
