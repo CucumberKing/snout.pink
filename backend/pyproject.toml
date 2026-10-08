@@ -23,7 +23,6 @@ dependencies = [
     "pyjwt[crypto]>=2.10.1",
     "pydantic[email]>=2.11.7",
     "beanie>=2.0.0",
-    "motor>=3.7.1",
     "httpx[http2]>=0.27.0",
     "structlog>=25.5.0",
     "webauthn>=2.7.0",

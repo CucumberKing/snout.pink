@@ -1,5 +1,5 @@
-import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject } from '@angular/core';
+
 import {
   IonHeader,
   IonToolbar,
@@ -13,7 +13,7 @@ import {
   ModalController,
   ViewWillEnter,
   RefresherCustomEvent,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { addOutline, settingsOutline, arrowForwardOutline, arrowDownOutline } from 'ionicons/icons';
 
@@ -25,9 +25,7 @@ import { Subscription } from '../../models/subscription.model';
 
 @Component({
   selector: 'app-subscriptions',
-  standalone: true,
   imports: [
-    CommonModule,
     IonHeader,
     IonToolbar,
     IonContent,
@@ -37,9 +35,8 @@ import { Subscription } from '../../models/subscription.model';
     IonFabButton,
     IonRefresher,
     IonRefresherContent,
-    SubscriptionCardComponent,
-  ],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    SubscriptionCardComponent
+],
   templateUrl: './subscriptions.html',
   styleUrl: './subscriptions.scss',
 })
@@ -67,6 +64,7 @@ export class SubscriptionsComponent implements ViewWillEnter {
       breakpoints: [0, 1],
       initialBreakpoint: 1,
       handle: true,
+      handleBehavior: 'none',
       showBackdrop: true,
     });
     await modal.present();
@@ -82,6 +80,7 @@ export class SubscriptionsComponent implements ViewWillEnter {
       breakpoints: [0, 1],
       initialBreakpoint: 1,
       handle: true,
+      handleBehavior: 'none',
       showBackdrop: true,
     });
     await modal.present();
@@ -93,6 +92,7 @@ export class SubscriptionsComponent implements ViewWillEnter {
       breakpoints: [0, 0.75, 1],
       initialBreakpoint: 0.75,
       handle: true,
+      handleBehavior: 'none',
       showBackdrop: true,
     });
     await modal.present();

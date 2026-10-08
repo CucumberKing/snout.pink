@@ -96,6 +96,7 @@ def configure_logging() -> None:
     # Quiet down noisy third-party loggers
     logging.getLogger("pymongo").setLevel(logging.WARNING)
     logging.getLogger("motor").setLevel(logging.WARNING)
+    logging.getLogger("pymongo").setLevel(logging.WARNING)
     logging.getLogger("httpx").setLevel(logging.WARNING)
     logging.getLogger("httpcore").setLevel(logging.WARNING)
     logging.getLogger("watchfiles").setLevel(logging.WARNING)

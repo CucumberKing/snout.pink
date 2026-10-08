@@ -1,5 +1,5 @@
-import { Component, inject, signal, ChangeDetectionStrategy, viewChild, ElementRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject, signal, viewChild, ElementRef } from '@angular/core';
+
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import {
@@ -12,7 +12,7 @@ import {
   IonSelect,
   IonSelectOption,
   ModalController,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import {
   closeOutline,
@@ -38,7 +38,6 @@ import { McpAccessComponent } from '../mcp-access/mcp-access';
 @Component({
   selector: 'app-settings-modal',
   imports: [
-    CommonModule,
     FormsModule,
     IonHeader,
     IonToolbar,
@@ -48,9 +47,8 @@ import { McpAccessComponent } from '../mcp-access/mcp-access';
     IonIcon,
     IonSelect,
     IonSelectOption,
-    McpAccessComponent,
-  ],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    McpAccessComponent
+],
   templateUrl: './settings-modal.html',
   styleUrl: './settings-modal.scss',
 })

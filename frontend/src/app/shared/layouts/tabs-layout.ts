@@ -1,4 +1,4 @@
-import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import {
   IonTabs,
@@ -7,7 +7,7 @@ import {
   IonIcon,
   IonLabel,
   AlertController,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import {
   listOutline,
@@ -20,9 +20,7 @@ import { AuthService } from '../../services/auth';
 
 @Component({
   selector: 'app-tabs-layout',
-  standalone: true,
   imports: [RouterModule, IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './tabs-layout.html',
   styleUrl: './tabs-layout.scss',
 })

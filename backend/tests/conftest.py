@@ -19,7 +19,7 @@ import pytest_asyncio  # noqa: E402
 from beanie import init_beanie  # noqa: E402
 from fastapi import FastAPI  # noqa: E402
 from httpx import ASGITransport, AsyncClient  # noqa: E402
-from motor.motor_asyncio import AsyncIOMotorClient  # noqa: E402
+from pymongo import AsyncMongoClient  # noqa: E402
 
 from models import (  # noqa: E402
     AuthChallenge,
@@ -41,19 +41,19 @@ def event_loop():
 
 
 @pytest_asyncio.fixture(scope="function")
-async def mongo_client() -> AsyncGenerator[AsyncIOMotorClient]:
+async def mongo_client() -> AsyncGenerator[AsyncMongoClient]:
     """Create MongoDB client for testing."""
     mongo_uri = os.environ.get("MONGO_URI_TESTING")
     if not mongo_uri:
         pytest.skip("MONGO_URI_TESTING not set")
 
-    client = AsyncIOMotorClient(mongo_uri)
+    client = AsyncMongoClient(mongo_uri)
     yield client
-    client.close()
+    await client.close()
 
 
 @pytest_asyncio.fixture(scope="function")
-async def test_db(mongo_client: AsyncIOMotorClient) -> AsyncGenerator[Any]:
+async def test_db(mongo_client: AsyncMongoClient) -> AsyncGenerator[Any]:
     """Initialize test database with Beanie."""
     database = mongo_client.get_database("habicht_test")
 

@@ -1,6 +1,6 @@
-import { Component, inject, computed, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { IonHeader, IonToolbar, IonContent } from '@ionic/angular/standalone';
+import { Component, inject, computed } from '@angular/core';
+
+import { IonHeader, IonToolbar, IonContent } from '@ionic/angular';
 
 import { SubscriptionService } from '../../services/subscription.service';
 import { CurrencyService } from '../../services/currency.service';
@@ -8,9 +8,7 @@ import { TreemapComponent } from './components/treemap/treemap';
 
 @Component({
   selector: 'app-treemap-view',
-  standalone: true,
-  imports: [CommonModule, IonHeader, IonToolbar, IonContent, TreemapComponent],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [IonHeader, IonToolbar, IonContent, TreemapComponent],
   templateUrl: './treemap-view.html',
   styleUrl: './treemap-view.scss',
 })

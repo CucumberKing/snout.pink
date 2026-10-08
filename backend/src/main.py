@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager
 from beanie import init_beanie
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from motor.motor_asyncio import AsyncIOMotorClient
+from pymongo import AsyncMongoClient
 from pymongo.errors import (
     NotPrimaryError,
     OperationFailure,
@@ -62,9 +62,9 @@ def create_app(*, connect_db: bool = True) -> FastAPI:
     async def lifespan(app: FastAPI) -> AsyncGenerator[None]:
         """Application lifespan manager."""
         log.info("starting_application", dev=settings.dev)
-        client: AsyncIOMotorClient | None = None
+        client: AsyncMongoClient | None = None
         if connect_db:
-            client = AsyncIOMotorClient(settings.mongo_uri)
+            client = AsyncMongoClient(settings.mongo_uri)
             database = client.get_default_database()
             log.info("initializing_beanie", database=database.name)
             while True:
@@ -89,7 +89,7 @@ def create_app(*, connect_db: bool = True) -> FastAPI:
 
         log.info("shutting_down_application")
         if client is not None:
-            client.close()
+            await client.close()
 
     app = FastAPI(
         title="Snout Pink API",

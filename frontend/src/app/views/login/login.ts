@@ -1,7 +1,7 @@
-import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject } from '@angular/core';
+
 import { Router } from '@angular/router';
-import { IonContent, IonButton, IonIcon, IonSpinner } from '@ionic/angular/standalone';
+import { IonContent, IonButton, IonIcon, IonSpinner } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { fingerPrintOutline, personAddOutline, alertCircleOutline } from 'ionicons/icons';
 
@@ -9,9 +9,7 @@ import { AuthService } from '../../services/auth';
 
 @Component({
   selector: 'app-login',
-  standalone: true,
-  imports: [CommonModule, IonContent, IonButton, IonIcon, IonSpinner],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [IonContent, IonButton, IonIcon, IonSpinner],
   templateUrl: './login.html',
   styleUrl: './login.scss',
 })

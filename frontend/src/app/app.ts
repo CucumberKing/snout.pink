@@ -1,5 +1,5 @@
-import { Component, inject } from '@angular/core';
-import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
+import { IonApp, IonRouterOutlet } from '@ionic/angular';
 import { SwUpdate, VersionReadyEvent } from '@angular/service-worker';
 import { filter } from 'rxjs';
 import { AnalyticsService } from './services/analytics.service';
@@ -7,13 +7,13 @@ import { WebMcpService } from './services/webmcp.service';
 
 @Component({
   selector: 'app-root',
-  standalone: true,
   imports: [IonApp, IonRouterOutlet],
   template: `
     <ion-app>
       <ion-router-outlet />
     </ion-app>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [`
     :host {
       display: block;

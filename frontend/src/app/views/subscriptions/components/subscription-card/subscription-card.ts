@@ -1,6 +1,6 @@
-import { Component, input, output, inject, ChangeDetectionStrategy, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { IonIcon, AlertController } from '@ionic/angular/standalone';
+import { Component, input, output, inject, signal } from '@angular/core';
+
+import { IonIcon, AlertController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { createOutline, trashOutline } from 'ionicons/icons';
 import { Haptics, ImpactStyle } from '@capacitor/haptics';
@@ -11,9 +11,7 @@ import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-subscription-card',
-  standalone: true,
-  imports: [CommonModule, IonIcon],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [IonIcon],
   templateUrl: './subscription-card.html',
   styleUrl: './subscription-card.scss',
 })

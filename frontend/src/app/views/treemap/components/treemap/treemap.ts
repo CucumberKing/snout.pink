@@ -6,10 +6,9 @@ import {
   ElementRef,
   viewChild,
   afterNextRender,
-  ChangeDetectionStrategy,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { IonIcon } from '@ionic/angular/standalone';
+
+import { IonIcon } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { gridOutline } from 'ionicons/icons';
 
@@ -22,9 +21,7 @@ import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-treemap',
-  standalone: true,
-  imports: [CommonModule, IonIcon],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [IonIcon],
   templateUrl: './treemap.html',
   styleUrl: './treemap.scss',
 })

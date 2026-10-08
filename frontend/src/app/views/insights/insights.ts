@@ -1,6 +1,6 @@
-import { Component, inject, computed, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { IonHeader, IonToolbar, IonContent, IonIcon } from '@ionic/angular/standalone';
+import { Component, inject, computed } from '@angular/core';
+
+import { IonHeader, IonToolbar, IonContent, IonIcon } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { sparklesOutline } from 'ionicons/icons';
 
@@ -10,9 +10,7 @@ import { Subscription } from '../../models/subscription.model';
 
 @Component({
   selector: 'app-insights',
-  standalone: true,
-  imports: [CommonModule, IonHeader, IonToolbar, IonContent, IonIcon],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [IonHeader, IonToolbar, IonContent, IonIcon],
   templateUrl: './insights.html',
   styleUrl: './insights.scss',
 })

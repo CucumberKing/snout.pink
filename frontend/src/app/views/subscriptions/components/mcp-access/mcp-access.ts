@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
   IonButton,
@@ -6,7 +6,7 @@ import {
   IonInput,
   IonSelect,
   IonSelectOption,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { copyOutline, keyOutline, trashOutline } from 'ionicons/icons';
 
@@ -24,7 +24,6 @@ type AccessChoice = 'read' | 'read_write';
 @Component({
   selector: 'app-mcp-access',
   imports: [IonButton, IonIcon, IonInput, IonSelect, IonSelectOption],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './mcp-access.html',
   styleUrl: './mcp-access.scss',
 })

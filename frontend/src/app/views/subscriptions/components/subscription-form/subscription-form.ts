@@ -1,5 +1,5 @@
-import { Component, inject, signal, Input, ChangeDetectionStrategy, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject, signal, Input, OnInit } from '@angular/core';
+
 import { FormsModule } from '@angular/forms';
 import {
   IonHeader,
@@ -12,7 +12,7 @@ import {
   IonSelect,
   IonSelectOption,
   ModalController,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { closeOutline, globeOutline, checkmarkOutline } from 'ionicons/icons';
 import { Haptics, ImpactStyle } from '@capacitor/haptics';
@@ -32,9 +32,7 @@ import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-subscription-form',
-  standalone: true,
   imports: [
-    CommonModule,
     FormsModule,
     IonHeader,
     IonToolbar,
@@ -44,9 +42,8 @@ import { environment } from '../../../../../environments/environment';
     IonIcon,
     IonInput,
     IonSelect,
-    IonSelectOption,
-  ],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    IonSelectOption
+],
   templateUrl: './subscription-form.html',
   styleUrl: './subscription-form.scss',
 })
